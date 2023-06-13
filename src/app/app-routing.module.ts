@@ -4,8 +4,6 @@ import { SecondComponent } from './second/second.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 
 
-
-
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
   { path: 'second', component: SecondComponent }

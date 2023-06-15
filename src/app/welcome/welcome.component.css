@@ -5,7 +5,9 @@
     align-items: center;
     height: 80vh;
   }
-  
+  .blue-icon {
+    color:black;
+  }
   h1 {
     text-align: center;
     color:orangered

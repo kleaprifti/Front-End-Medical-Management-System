@@ -8,10 +8,12 @@
   
   h1 {
     text-align: center;
+    color:orangered
   }
   
   button {
     margin-top: 20px;
+    color:black;
   }
 
   

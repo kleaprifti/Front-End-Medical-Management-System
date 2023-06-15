@@ -9,4 +9,30 @@ p {
   label{
     font-size: medium;
     color: blue;
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+  
+
+  select.doctors-select {
+    width: 13%;
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #4f9f9d;
+    border-radius: 5px;
+    display: inline-block;
+  }
+  
+  div.col-sm-10 {
+    margin-bottom: 20px;
+    text-align: left;  
+}
+
+.doctors-select {
+    display: inline-block;
+  }
+  
+  .doctors-select option {
+    display: inline;
+    padding: 0 5px;
   }

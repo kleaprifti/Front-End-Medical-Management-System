@@ -1,11 +1,11 @@
 <p>List of doctors!</p>
-<ul>
-  <li *ngFor="let doctor of doctors">{{ doctor.fullName }}</li>
-</ul>
-    <label for="doctors">Choose a doctor:</label>
-    <select name="doctors" id="doctors-select" >
-        <option value="empty"></option>
-      <option value="Doctor1"> Dr1</option>
-      <option value="Doctor2">Dr2</option>
-      <option value="Doctor3">Dr3</option>
-    </select>
+<label for="doctors">Choose a doctor:</label>
+
+<div class ="col-sm-10">
+ <select name="doctors" class="doctors-select">
+  <option></option>
+  <option [value]= "doctor" *ngFor="let doctor of doctors">
+    {{ doctor.fullName }}
+  </option>
+ </select>
+ </div>

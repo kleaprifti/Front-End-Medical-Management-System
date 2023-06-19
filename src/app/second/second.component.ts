@@ -10,12 +10,20 @@ import { UserService } from '../user.service';
 export class SecondComponent implements OnInit {
   
   doctors: User[] = [];
+  sortedUsers: User[] = [];
 
     constructor(private userService: UserService) { }
   
     ngOnInit() {
       this.userService.getDoctors().subscribe(users => {
         this.doctors = users;
+        this.sortUsersAlphabetically();
+      });
+    }
+  
+    sortUsersAlphabetically() {
+      this.sortedUsers = this.doctors.sort((a, b) => {
+        return a.fullName.localeCompare(b.fullName);
       });
     }
   }

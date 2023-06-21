@@ -17,13 +17,7 @@ export class SecondComponent implements OnInit {
     ngOnInit() {
       this.userService.getDoctors().subscribe(users => {
         this.doctors = users;
-        this.sortUsersAlphabetically();
       });
     }
   
-    sortUsersAlphabetically() {
-      this.sortedUsers = this.doctors.sort((a, b) => {
-        return a.fullName.localeCompare(b.fullName);
-      });
-    }
   }

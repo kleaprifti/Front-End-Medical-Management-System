@@ -18,11 +18,11 @@
           <tr>
             <th>
               Patient
-              <i class="bi bi-sort-alpha-up ml-2" (click)="sortAppointmentsByPatient()"></i>
+              <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down'" (click)="togglePatientSortOrder()"></i>
             </th>
             <th>
               Appointment Start Date & Time
-              <i class="bi bi-sort-down ml-2" (click)="sortAppointmentsByDate()"></i>
+              <i [ngClass]="appointmentSortOrder === 'asc' ? 'bi bi-sort-down' : 'bi bi-sort-up'" (click)="toggleAppointmentSortOrder()"></i>
             </th>
             <th>Appointment End Date & Time</th>
           </tr>

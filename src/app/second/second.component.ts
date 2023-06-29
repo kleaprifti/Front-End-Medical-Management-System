@@ -18,6 +18,9 @@ export class SecondComponent implements OnInit {
   selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
   isDateSortedAscending:boolean=false;
+  patientSortOrder: 'asc' | 'desc' = 'asc';
+  appointmentSortOrder: 'asc' | 'desc' = 'desc';
+
 
     constructor(private userService: UserService, private appointmentService: AppointmentService) { }
   
@@ -75,6 +78,14 @@ export class SecondComponent implements OnInit {
           : new Date(b.appointmentDateStartTime).getTime() - new Date(a.appointmentDateStartTime).getTime()
       );
     }
-
+    
+  togglePatientSortOrder() {
+    this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
+    this.sortAppointmentsByPatient();
+  }
+  toggleAppointmentSortOrder() {
+    this.appointmentSortOrder = this.appointmentSortOrder === 'asc' ? 'desc' : 'asc';
+    this.sortAppointmentsByDate();
+  }
 }
   

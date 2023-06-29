@@ -1,14 +1,44 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
-<p>List of doctors!</p>
-<i class="fa fa-user-md" style="font-size:40px;color:darkblue"></i>
-<label for="doctors">Choose a doctor:</label>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <p>List of doctors!</p>
+      <label for="doctors"><i class="bi bi-person-fill"></i> Choose a doctor:</label>
+      <div class="col-sm-10">
+        <select name="doctors" class="form-control" [(ngModel)]="selectedDoctorId" (ngModelChange)="onDoctorSelection()">
+          <option [ngValue]="null"></option>
+          <option [ngValue]="doctor.id" *ngFor="let doctor of doctors">{{ doctor.fullName }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              Patient
+              <i class="bi bi-sort-alpha-up ml-2" (click)="sortAppointmentsByPatient()"></i>
+            </th>
+            <th>
+              Appointment Start Date & Time
+              <i class="bi bi-sort-down ml-2" (click)="sortAppointmentsByDate()"></i>
+            </th>
+            <th>Appointment End Date & Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appointment of appointments">
+            <td>{{ appointment.patientFullName }}</td>
+            <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
+            <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<div class ="col-sm-10">
- <select name="doctors" class="doctors-select">
-  <option></option>
-  <option [value]= "doctor" *ngFor="let doctor of doctors">
-    {{ doctor.fullName }}
-  </option>
- </select>
- </div>
+
+
+

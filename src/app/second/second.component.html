@@ -2,9 +2,9 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6"> 
       <p>List of doctors!</p>
-      <label for="doctors"><i class="bi bi-person-fill"></i> Choose a doctor:</label>
+      <label for="doctors"><i class="bi bi-person-fill"></i> Doctors:</label>
       <div class="col-sm-10">
         <select name="doctors" class="form-control" [(ngModel)]="selectedDoctorId" (ngModelChange)="onDoctorSelection()">
           <option [ngValue]="null"></option>
@@ -13,18 +13,20 @@
       </div>
     </div>
     <div class="col-md-6">
-      <table class="table">
-        <thead>
+      <div *ngIf="selectedDoctorId !== null">
+        <h5 class="h5">Appointments</h5>
+        <table class="table">
+          <thead>
           <tr>
             <th>
               Patient
               <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up'" (click)="togglePatientSortOrder()"></i>
             </th>
             <th>
-              Appointment Start Date & Time
+              Start Date & Time
               <i [ngClass]="appointmentSortOrder === 'asc' ? 'bi bi-sort-down' : 'bi bi-sort-up'" (click)="toggleAppointmentSortOrder()"></i>
             </th>
-            <th>Appointment End Date & Time</th>
+            <th>End Date & Time</th>
           </tr>
         </thead>
         <tbody>

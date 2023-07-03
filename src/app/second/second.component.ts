@@ -20,6 +20,8 @@ export class SecondComponent implements OnInit {
   isDateSortedAscending:boolean=false;
   patientSortOrder: 'asc' | 'desc' = 'asc';
   appointmentSortOrder: 'asc' | 'desc' = 'desc';
+  isDoctorSelected: boolean = false; 
+
 
 
     constructor(private userService: UserService, private appointmentService: AppointmentService) { }
@@ -35,8 +37,11 @@ export class SecondComponent implements OnInit {
     onDoctorSelection() {
       console.log('Selected doctor ID:', this.selectedDoctorId);
       if (this.selectedDoctorId !== null) {
+        this.isDoctorSelected = true; 
         this.loadAppointments();
-      } 
+      } else {
+        this.appointments = [];
+      }
     }
     loadAppointments() {
       console.log('Loading appointments...');

@@ -13,3 +13,8 @@ p {
     font-family: Georgia, 'Times New Roman', Times, serif;
   }
   
+  .narrow-date-input {
+    max-width: 150px; /* Adjust the value as needed */
+    width: auto;
+  }
+  

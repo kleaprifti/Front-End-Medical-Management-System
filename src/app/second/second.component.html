@@ -1,10 +1,9 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6"> 
-      <p>List of doctors!</p>
-      <label for="doctors"><i class="bi bi-person-fill"></i> Doctors:</label>
+      <label for="doctors"style="margin-top: 60px;"><i class="bi bi-person-fill"></i> Doctors:</label>
       <div class="col-sm-10">
-        <select name="doctors" class="form-control" [(ngModel)]="selectedDoctorId" (ngModelChange)="onDoctorSelection()">
+        <select name="doctors" class="form-control" [(ngModel)]="selectedDoctorId" (ngModelChange)="onDoctorSelection()" >
           <option [ngValue]="null"></option>
           <option [ngValue]="doctor.id" *ngFor="let doctor of doctors">{{ doctor.fullName }}</option>
         </select>

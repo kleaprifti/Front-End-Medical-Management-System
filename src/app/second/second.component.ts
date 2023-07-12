@@ -42,7 +42,7 @@ export class SecondComponent implements OnInit {
 
   loadAppointments() {
     console.log('Loading appointments...');
-  
+    
     if (this.selectedDoctorId !== null) {
       let startDateTime: string | undefined;
       let endDateTime: string | undefined;
@@ -61,11 +61,9 @@ export class SecondComponent implements OnInit {
       this.appointmentService.getAppointments(this.selectedDoctorId, startDateTime, endDateTime).subscribe(
         appointments => {
           if (appointments.length === 0) {
-            this.appointments = []; // Assign empty array
+            this.appointments = [];
           } else {
             this.appointments = appointments;
-  
-            // Apply sorting
             this.sortAppointmentsByDate();
             this.sortAppointmentsByPatient();
           }
@@ -74,10 +72,14 @@ export class SecondComponent implements OnInit {
         },
         error => {
           console.log('Error occurred while loading appointments:', error);
+          this.appointments = []; // Reset appointments to an empty array on error
         }
       );
+    } else {
+      this.appointments = []; // Reset appointments to an empty array when no doctor is selected
     }
   }
+  
   
 
 

@@ -11,6 +11,10 @@
       </div>
     </div>
     <div class="col-md-6">
+      <div class="col-md-6">
+        <label for="date">Date:</label>
+        <input type="date" name="date" class="form-control narrow-date-input" [(ngModel)]="selectedDate" (ngModelChange)="onDateSelection()">
+      </div>
       <div *ngIf="selectedDoctorId !== null">
         <h5 class="h5">Appointments</h5>
         <div *ngIf="appointments.length > 0; else noAppointmentsMessage">
@@ -36,6 +40,7 @@
               </tr>
             </tbody>
           </table>
+        
         </div>
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>
@@ -43,8 +48,4 @@
       </div>
     </div>
   </div>
-</div>
-<div class="col-md-6">
-  <label for="date">Date:</label>
-  <input type="date" name="date" class="form-control narrow-date-input" [(ngModel)]="selectedDate" (ngModelChange)="onDateSelection()">
 </div>

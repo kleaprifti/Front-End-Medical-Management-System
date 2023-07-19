@@ -16,9 +16,8 @@ export class SecondComponent implements OnInit {
   isPatientSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
   patientSortOrder: 'asc' | 'desc' = 'asc';
-  appointmentSortOrder: 'asc' | 'desc' = 'desc';
   isDoctorSelected: boolean = false;
-  selectedDate: Date = new Date();
+  selectedDate: Date | null = new Date(); // Initialize with the current date
 
   constructor(private userService: UserService, private appointmentService: AppointmentService) {}
 
@@ -28,46 +27,40 @@ export class SecondComponent implements OnInit {
       console.log('Doctors:', this.doctors);
     });
     this.loadAppointments();
+
   }
+
+  
+
 
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
-    if (this.selectedDoctorId !== null) {
-      this.isDoctorSelected = true;
-      this.loadAppointments();
-    } else {
-      this.appointments = [];
-    }
+    this.isDoctorSelected = !!this.selectedDoctorId;
+    this.loadAppointments();
   }
 
-  loadAppointments() {
+   loadAppointments() {
     console.log('Loading appointments...');
-    
     if (this.selectedDoctorId !== null) {
       let startDateTime: string | undefined;
       let endDateTime: string | undefined;
-  
-      // Set startDateTime and endDateTime based on the selected date
       if (this.selectedDate) {
         const start = new Date(this.selectedDate);
         start.setHours(0, 0, 0, 0);
         startDateTime = start.toISOString();
-  
         const end = new Date(this.selectedDate);
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
       }
-  
       this.appointmentService.getAppointments(this.selectedDoctorId, startDateTime, endDateTime).subscribe(
         appointments => {
-          if (appointments.length === 0) {
-            this.appointments = [];
-          } else {
-            this.appointments = appointments;
-            this.sortAppointmentsByDate();
-            this.sortAppointmentsByPatient();
-          }
-  
+          this.appointments = appointments;
+          this.sortAppointmentsByPatient();
+          this.appointments.sort((a, b) => {
+            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+            return startTimeA - startTimeB;
+          });
           console.log(this.appointments);
         },
         error => {
@@ -75,19 +68,25 @@ export class SecondComponent implements OnInit {
           this.appointments = []; // Reset appointments to an empty array on error
         }
       );
+      this.appointments.sort((a, b) => {
+        const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+        const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+        return startTimeB - startTimeA;
+      });
     } else {
-      this.appointments = []; // Reset appointments to an empty array when no doctor is selected
+      this.appointments = []; 
     }
+
+  }
+ 
+  onDateSelection(selectedDate: Date | null) {
+    this.selectedDate = selectedDate;
+    this.loadAppointments();
   }
   
-  
-
-
-  onDateSelection() {
-    console.log('Selected date:', this.selectedDate);
-    if (!this.selectedDate) {
-      this.selectedDate = new Date(); // Set selectedDate to current date
-    }
+ 
+  clearDate() {
+    this.selectedDate = null; 
     this.loadAppointments();
   }
 
@@ -105,22 +104,11 @@ export class SecondComponent implements OnInit {
     });
   }
 
-  sortAppointmentsByDate() {
-    this.isDateSortedAscending = !this.isDateSortedAscending;
-    this.appointments.sort((a, b) =>
-      this.isDateSortedAscending
-        ? new Date(a.appointmentDateStartTime).getTime() - new Date(b.appointmentDateStartTime).getTime()
-        : new Date(b.appointmentDateStartTime).getTime() - new Date(a.appointmentDateStartTime).getTime()
-    );
-  }
+
 
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByPatient();
   }
 
-  toggleAppointmentSortOrder() {
-    this.appointmentSortOrder = this.appointmentSortOrder === 'asc' ? 'desc' : 'asc';
-    this.sortAppointmentsByDate();
-  }
 }

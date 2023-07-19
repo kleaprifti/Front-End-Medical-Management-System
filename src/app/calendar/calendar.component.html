@@ -1,0 +1,9 @@
+<div class="calendar-container">
+    <input
+      type="date"
+      class="calendar-input"
+      [value]="selectedDate | date: 'yyyy-MM-dd'"
+
+      (change)="onDateChange($event)"
+    />
+  </div>

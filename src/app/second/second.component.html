@@ -1,20 +1,29 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-6"> 
-      <label for="doctors"style="margin-top: 60px;"><i class="bi bi-person-fill"></i> Doctors:</label>
+    <div class="col-md-6">
+      <label for="doctors">
+        <i class="bi bi-person-fill"></i> Doctors:
+      </label>
       <div class="col-sm-10">
-        <select name="doctors" class="form-control" [(ngModel)]="selectedDoctorId" (ngModelChange)="onDoctorSelection()" >
+        <select
+          name="doctors"
+          class="form-control"
+          [(ngModel)]="selectedDoctorId"
+          (ngModelChange)="onDoctorSelection()"
+        >
           <option [ngValue]="null"></option>
-          <option [ngValue]="doctor.id" *ngFor="let doctor of doctors">{{ doctor.fullName }}</option>
+          <option [ngValue]="doctor.id" *ngFor="let doctor of doctors">
+            {{ doctor.fullName }}
+          </option>
         </select>
       </div>
     </div>
     <div class="col-md-6">
       <div class="col-md-6">
         <label for="date">Date:</label>
-        <input type="date" name="date" class="form-control narrow-date-input" [(ngModel)]="selectedDate" (ngModelChange)="onDateSelection()">
+        <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
       </div>
-      <div *ngIf="selectedDoctorId !== null">
+      <div *ngIf="isDoctorSelected">
         <h5 class="h5">Appointments</h5>
         <div *ngIf="appointments.length > 0; else noAppointmentsMessage">
           <table class="table">
@@ -26,7 +35,6 @@
                 </th>
                 <th>
                   Start Date & Time
-                  <i [ngClass]="appointmentSortOrder === 'asc' ? 'bi bi-sort-down' : 'bi bi-sort-up'" (click)="toggleAppointmentSortOrder()"></i>
                 </th>
                 <th>End Date & Time</th>
               </tr>
@@ -39,7 +47,6 @@
               </tr>
             </tbody>
           </table>
-        
         </div>
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>

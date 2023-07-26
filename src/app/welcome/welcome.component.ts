@@ -13,7 +13,7 @@ export class WelcomeComponent {
 
   constructor(private router: Router) {}
 
-  redirectToSecondPage() {
-    this.router.navigateByUrl('/second');
+  redirectToAppointmentListPage() {
+    this.router.navigateByUrl('/appointment-list');
   }
 }

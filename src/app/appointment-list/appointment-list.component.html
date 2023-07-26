@@ -26,6 +26,7 @@
       <div *ngIf="isDoctorSelected">
         <h5 class="h5">Appointments</h5>
         <div *ngIf="appointments.length > 0; else noAppointmentsMessage">
+          <div class="appointments-container">
           <table class="table">
             <thead>
               <tr>
@@ -37,6 +38,9 @@
                   Start Date & Time
                 </th>
                 <th>End Date & Time</th>
+                <th>
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -44,10 +48,19 @@
                 <td>{{ appointment.patientFullName }}</td>
                 <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
                 <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
+                <td>
+                  <button
+                  *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
+                  (click)="onDeleteAppointment(appointment)"
+                  class="btn btn-danger">
+                  <i class="fa fa-remove"></i>Delete
+                </button>                
+              </td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>
         </ng-template>

@@ -1,0 +1,48 @@
+p {
+    text-align: center;
+    color: #9a9a9a;
+    font-weight: bold;
+    font-size: 1rem;
+
+  }
+
+  label{
+    font-size: medium;
+    color: blue;
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+  
+  .narrow-date-input {
+    max-width: 150px; /* Adjust the value as needed */
+    width: auto;
+  }
+  
+  .appointments-container {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 600px
+  }
+
+  .btn-delete {
+    margin: 0.2rem;
+    color: blue;
+  }
+  .btn-danger {
+    background-color: #dc3545; 
+    color: #fff; 
+    border-color: #dc3545; 
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333; 
+  }
+  
+  
+  
+  
+  
+  
+  
+  

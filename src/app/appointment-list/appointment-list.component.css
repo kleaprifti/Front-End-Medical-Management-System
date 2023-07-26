@@ -18,6 +18,15 @@ p {
     width: auto;
   }
   
+  .remove-button {
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+    color: #d32f2f; 
+  }
+
   .appointments-container {
     text-align: center;
     margin: 0 auto;

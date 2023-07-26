@@ -19,48 +19,54 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="col-md-6">
-        <label for="date">Date:</label>
-        <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
-      </div>
+      <label for="date">Date:</label>
+      <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
+    </div>
+  </div>
+
+  <!-- Appointments Section -->
+  <div class="row">
+    <div class="col-md-12">
       <div *ngIf="isDoctorSelected">
-        <h5 class="h5">Appointments</h5>
-        <div *ngIf="appointments.length > 0; else noAppointmentsMessage">
-          <div class="appointments-container">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>
-                  Patient
-                  <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up'" (click)="togglePatientSortOrder()"></i>
-                </th>
-                <th>
-                  Start Date & Time
-                </th>
-                <th>End Date & Time</th>
-                <th>
-                  Delete
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let appointment of appointments">
-                <td>{{ appointment.patientFullName }}</td>
-                <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
-                <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
-                <td>
-                  <button
-                  *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
-                  (click)="onDeleteAppointment(appointment)"
-                  class="btn btn-danger">
-                  <i class="fa fa-remove"></i>Delete
-                </button>                
-              </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <h5 class="h5 text-center">Appointments</h5>
+        <ng-container *ngIf="appointments.length > 0; else noAppointmentsMessage">
+          <div class="appointments-container d-flex justify-content-center">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>
+                    Patient
+                    <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up'" (click)="togglePatientSortOrder()"></i>
+                  </th>
+                  <th>
+                    Start Date & Time
+                  </th>
+                  <th>End Date & Time</th>
+                  <th>
+                    Delete
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let appointment of appointments">
+                  <td>{{ appointment.patientFullName }}</td>
+                  <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
+                  <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
+                  <td>
+                    <button
+                      *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
+                      (click)="onDeleteAppointment(appointment)"
+                      class="btn btn-danger"
+                    >
+                      <i class="fa fa-remove  remove-button"></i><span>Delete</span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>
         </ng-template>

@@ -17,6 +17,11 @@ p {
     max-width: 150px; /* Adjust the value as needed */
     width: auto;
   }
+
+  .h5 {
+    margin-top: 75px;
+    text-align:center;
+  }
   
   .remove-button {
     margin-right: 5px;
@@ -26,7 +31,10 @@ p {
   .appointments-container {
     text-align: center;
     margin: 0 auto;
-    max-width: 600px
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 800px
   }
 
   .btn-delete {
@@ -44,10 +52,15 @@ p {
     border-color: #c82333; 
   }
   
+  .appointments-table {
+    table-layout: fixed;
+    width: 100%; 
+  }
   
+  .appointments-table th {
+    width: 40%; 
+  }
   
-  
-  
-  
-  
-  
+  .appointments-table td {
+    width: 45%; 
+  }

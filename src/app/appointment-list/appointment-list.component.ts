@@ -34,8 +34,6 @@ export class AppointmentListComponent implements OnInit {
   isFutureDate(dateStr: string): boolean {
     const currentDate = new Date().getTime();
     const appointmentDate = new Date(dateStr).getTime();
-    console.log('Current Date:', currentDate);
-    console.log('Appointment Date:', appointmentDate);
     return appointmentDate > currentDate;
   
 }
@@ -132,14 +130,9 @@ export class AppointmentListComponent implements OnInit {
     });
   }
 
-
-
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByPatient();
   }
 
 }
-
-
-

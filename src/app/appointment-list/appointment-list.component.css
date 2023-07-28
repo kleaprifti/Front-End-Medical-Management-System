@@ -19,12 +19,8 @@ p {
   }
   
   .remove-button {
-    font-size: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-radius: 5px;
-    color: #d32f2f; 
+    margin-right: 5px;
+  
   }
 
   .appointments-container {
@@ -39,7 +35,7 @@ p {
   }
   .btn-danger {
     background-color: #dc3545; 
-    color: blue; 
+    color: white; 
     border-color: #dc3545; 
   }
   

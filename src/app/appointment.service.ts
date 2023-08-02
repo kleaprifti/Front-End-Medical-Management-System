@@ -21,8 +21,6 @@ export class AppointmentService {
     return this.http.get<Appointment[]>(url);
   }
   
-
-
   getAllAppointments(doctorId: number | null, startDateTime: string | undefined, endDateTime: string | undefined): Observable<Appointment[]> {
     let params = new HttpParams();
 
@@ -38,6 +36,11 @@ export class AppointmentService {
     const url = `${this.apiUrl}/appointments`;
     return this.http.get<Appointment[]>(url, { params: params });
   }
+  
+  deleteAppointment(appointmentId: number, wantNotification: boolean): Observable<void> {
+    const url = `${this.apiUrl}/${appointmentId}?wantNotification=${wantNotification}`;
+    return this.http.delete<void>(url);
 }
 
 
+}

@@ -5,11 +5,11 @@ import { Appointment } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 
 @Component({
-  selector: 'app-second',
-  templateUrl: './second.component.html',
-  styleUrls: ['./second.component.css']
+  selector: 'app-appointment-list',
+  templateUrl: './appointment-list.component.html',
+  styleUrls: ['./appointment-list.component.css']
 })
-export class SecondComponent implements OnInit {
+export class AppointmentListComponent implements OnInit {
   doctors: User[] = [];
   appointments: Appointment[] = [];
   selectedDoctorId: number | null = null;
@@ -17,7 +17,8 @@ export class SecondComponent implements OnInit {
   isDateSortedAscending: boolean = false;
   patientSortOrder: 'asc' | 'desc' = 'asc';
   isDoctorSelected: boolean = false;
-  selectedDate: Date | null = new Date(); // Initialize with the current date
+  selectedDate: Date | null = new Date();
+  DeleteAppointment: Appointment[] = [];
 
   constructor(private userService: UserService, private appointmentService: AppointmentService) {}
 
@@ -30,8 +31,32 @@ export class SecondComponent implements OnInit {
 
   }
 
+  isFutureDate(dateStr: string): boolean {
+    const currentDate = new Date().getTime();
+    const appointmentDate = new Date(dateStr).getTime();
+    return appointmentDate > currentDate;
+  
+}
+
   
 
+  onDeleteAppointment(appointment: Appointment) {
+    const confirmation = window.confirm('Are you sure to delete this appointment?');
+    if (confirmation) {
+      this.appointmentService.deleteAppointment(appointment.appointmentId, false).subscribe(
+        () => {
+          this.appointments = this.appointments.filter(a => a !== appointment);
+          alert('Appointment deleted successfully');
+        },
+        error => {
+          console.log('Error occurred while deleting appointment:', error);
+        }
+      );
+    } else {
+      alert('Appointment deletion canceled.');
+    }
+  }
+ 
 
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
@@ -65,7 +90,7 @@ export class SecondComponent implements OnInit {
         },
         error => {
           console.log('Error occurred while loading appointments:', error);
-          this.appointments = []; // Reset appointments to an empty array on error
+          this.appointments = []; 
         }
       );
       this.appointments.sort((a, b) => {
@@ -79,6 +104,7 @@ export class SecondComponent implements OnInit {
 
   }
  
+
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
     this.loadAppointments();
@@ -103,8 +129,6 @@ export class SecondComponent implements OnInit {
       }
     });
   }
-
-
 
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';

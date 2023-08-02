@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { SecondComponent } from './second/second.component';
+import { AppointmentListComponent } from './appointment-list/appointment-list.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { DatePipe } from '@angular/common'; 
 import { DateFormatPipe } from './date-format.pipe';
@@ -20,7 +20,7 @@ import { DateFormatPipe } from './date-format.pipe';
   declarations: [
     AppComponent,
     WelcomeComponent,
-    SecondComponent,
+    AppointmentListComponent,
     DateFormatPipe,
     CalendarComponent,
   

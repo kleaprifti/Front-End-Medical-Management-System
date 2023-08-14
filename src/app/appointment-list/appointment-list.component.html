@@ -31,33 +31,32 @@
         <h5 class="h5">Appointments</h5>
         <ng-container *ngIf="appointments.length > 0; else noAppointmentsMessage">
           <div class="appointments-container">
-            <table class="table">
+            <table class="table table-flex">
               <thead>
                 <tr>
                   <th>
                     Patient
-                    <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up'" (click)="togglePatientSortOrder()"></i>
+                    <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="togglePatientSortOrder()"></i>
                   </th>
                   <th>
-                    Start Date & Time
+                    Start Time
+                    <i [ngClass]="startTimeSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="toggleStartTimeSortOrder()"></i>
                   </th>
-                  <th>End Date & Time</th>
+                  <th>End Time</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let appointment of appointments">
                   <td>{{ appointment.patientFullName }}</td>
                   <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
-                  <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
-                  <td>
+                  <td>{{ appointment.appointmentDateEndTime | date:'medium' }} </td>
                     <button
                       *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
                       (click)="onDeleteAppointment(appointment)"
-                      class="btn btn-danger"
-                    >
-                      <i class="fa fa-remove  remove-button"></i><span>Delete</span>
+                      class="btn btn-light btn-sm"
+                                          >
+                      <i class="bi bi-trash-fill remove-button"></i>
                     </button>
-                  </td>
                 </tr>
               </tbody>
             </table>

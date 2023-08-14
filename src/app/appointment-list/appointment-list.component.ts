@@ -16,6 +16,7 @@ export class AppointmentListComponent implements OnInit {
   isPatientSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
   patientSortOrder: 'asc' | 'desc' = 'asc';
+  startTimeSortOrder: 'asc' | 'desc' = 'asc';
   isDoctorSelected: boolean = false;
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
@@ -133,6 +134,21 @@ export class AppointmentListComponent implements OnInit {
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByPatient();
+  }
+  sortAppointmentsByStartTime() {
+    this.appointments.sort((a, b) => {
+      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+
+      // Adjust the sorting order based on startTimeSortOrder
+      return this.startTimeSortOrder === 'asc' ? startTimeA - startTimeB : startTimeB - startTimeA;
+    });
+  }
+
+  // Toggle sorting order for start time
+  toggleStartTimeSortOrder() {
+    this.startTimeSortOrder = this.startTimeSortOrder === 'asc' ? 'desc' : 'asc';
+    this.sortAppointmentsByStartTime();
   }
 
 }

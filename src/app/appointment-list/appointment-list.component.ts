@@ -3,6 +3,9 @@ import { User } from '../user';
 import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
 import { AppointmentService } from '../appointment.service';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
+
 
 @Component({
   selector: 'app-appointment-list',
@@ -21,7 +24,7 @@ export class AppointmentListComponent implements OnInit {
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
 
-  constructor(private userService: UserService, private appointmentService: AppointmentService) {}
+  constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
     this.userService.getDoctors().subscribe(users => {
@@ -39,25 +42,44 @@ export class AppointmentListComponent implements OnInit {
   
 }
 
-  
 
-  onDeleteAppointment(appointment: Appointment) {
-    const confirmation = window.confirm('Are you sure to delete this appointment?');
-    if (confirmation) {
-      this.appointmentService.deleteAppointment(appointment.appointmentId, false).subscribe(
-        () => {
-          this.appointments = this.appointments.filter(a => a !== appointment);
-          alert('Appointment deleted successfully');
-        },
-        error => {
-          console.log('Error occurred while deleting appointment:', error);
-        }
-      );
-    } else {
-      alert('Appointment deletion canceled.');
+onDeleteAppointment(appointment: Appointment) {
+  const confirmationModalRef: BsModalRef = this.modalService.show(ModalComponent, {
+    initialState: {
+      actionType: 'confirmation',
+      modalTitle: 'Confirmation',
+      modalMessage: 'Are you sure you want to delete this appointment?'
     }
-  }
- 
+  });
+
+  confirmationModalRef.content.confirmed.subscribe(() => {
+    this.appointmentService.deleteAppointment(appointment.appointmentId, false).subscribe(
+      () => {
+        this.appointments = this.appointments.filter(a => a !== appointment);
+        this.showSuccessModal('Appointment deleted successfully');
+      },
+      error => {
+        console.log('Error occurred while deleting appointment:', error);
+      }
+    );
+  });
+}
+
+showSuccessModal(message: string) {
+  const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
+    initialState: {
+      actionType: 'success',
+      modalTitle: 'Success',
+      modalMessage: message
+    }
+  });
+
+  successModalRef.content.confirmed.subscribe(() => {
+  });
+}
+
+
+
 
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);

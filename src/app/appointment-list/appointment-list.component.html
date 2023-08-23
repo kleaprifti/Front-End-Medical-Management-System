@@ -53,10 +53,11 @@
                     <button
                       *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
                       (click)="onDeleteAppointment(appointment)"
-                      class="btn btn-light btn-sm"
-                                          >
-                      <i class="bi bi-trash-fill remove-button"></i>
+                      class="btn btn-light btn-sm remove-button"
+                      >
+                      <i class="bi bi-trash-fill remove-icon"></i>
                     </button>
+                    
                 </tr>
               </tbody>
             </table>

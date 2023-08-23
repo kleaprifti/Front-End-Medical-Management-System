@@ -14,7 +14,7 @@ p {
   }
   
   .narrow-date-input {
-    max-width: 150px; /* Adjust the value as needed */
+    max-width: 150px; 
     width: auto;
   }
 
@@ -25,7 +25,13 @@ p {
   
   .remove-button {
     margin-right: 5px;
+  }
   
+  .remove-button {
+    color: black; /* Adjust the color to match your design */
+  }
+  .remove-icon {
+    color: black; /* Adjust the color to match your design */
   }
 
   .appointments-container {
@@ -37,13 +43,14 @@ p {
     max-width: 800px
   }
 
-  .btn-delete {
+   .btn-delete {
     margin: 0.2rem;
     color: blue;
-  }
+  } 
+  
   .btn-danger {
     background-color: #dc3545; 
-    color: white; 
+    color: blue; 
     border-color: #dc3545; 
   }
   
@@ -64,17 +71,17 @@ p {
   .appointments-table td {
     width: 45%; 
   }
-  /* Apply flex behavior to the table */
+
 .table-flex {
   display: table;
   width: 100%;
   border-collapse: collapse;
 }
 
-/* Make the table cells distribute evenly */
+
 .table-flex td {
   display: table-cell;
-  width: 33.33%; /* Distribute columns evenly (adjust as needed) */
-  padding: 8px; /* Optional: add padding for cell content */
-  border: 2px solid #0c0c0c; /* Optional: reset border style to match Bootstrap's default */
+  width: 33.33%; 
+  padding: 8px;
+  border: 2px solid #0c0c0c; 
 }

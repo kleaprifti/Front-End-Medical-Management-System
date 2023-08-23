@@ -12,7 +12,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getDoctors(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/doctors`);
+    return this.http.get<User[]>(`${this.apiUrl}?userRole=DOCTOR`);
   }
 
 

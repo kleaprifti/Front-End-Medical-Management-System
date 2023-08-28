@@ -13,9 +13,18 @@ p {
     font-family: Georgia, 'Times New Roman', Times, serif;
   }
   
+  nav{
+    display: flex;
+  justify-content: flex-start; 
+  }
+  
   .narrow-date-input {
-    max-width: 150px; 
+    max-width: 100px; 
     width: auto;
+  }
+
+  .col-md-6{
+    align-self: center;
   }
 
   .h5 {
@@ -28,10 +37,10 @@ p {
   }
   
   .remove-button {
-    color: black; /* Adjust the color to match your design */
+    color: black; 
   }
   .remove-icon {
-    color: black; /* Adjust the color to match your design */
+    color: black; 
   }
 
   .appointments-container {
@@ -69,7 +78,7 @@ p {
   }
   
   .appointments-table td {
-    width: 45%; 
+    width: 40%; 
   }
 
 .table-flex {

@@ -14,6 +14,8 @@ export class UserService {
   getDoctors(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}?userRole=DOCTOR`);
   }
-
+  getPatients(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}?userRole=PATIENT`);
+  }
 
 }

@@ -15,6 +15,7 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
 export class AppointmentListComponent implements OnInit {
   doctors: User[] = [];
   appointments: Appointment[] = [];
+  patientAppointments: Appointment[] = [];
   selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
@@ -23,6 +24,8 @@ export class AppointmentListComponent implements OnInit {
   isDoctorSelected: boolean = false;
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
+  selectedPatientId: number | null = null;
+  patients: User[] = [];
 
   constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
@@ -30,6 +33,10 @@ export class AppointmentListComponent implements OnInit {
     this.userService.getDoctors().subscribe(users => {
       this.doctors = users;
       console.log('Doctors:', this.doctors);
+    });
+    this.userService.getPatients().subscribe(patients => {
+      this.patients = patients;
+      console.log('Patients:', this.patients);
     });
     this.loadAppointments();
 
@@ -87,7 +94,12 @@ showSuccessModal(message: string) {
     this.loadAppointments();
   }
 
-   loadAppointments() {
+  onPatientSelection() {
+    console.log('Selected patient ID:', this.selectedPatientId);
+    this.loadAppointments();
+  }
+  
+  loadAppointments() {
     console.log('Loading appointments...');
     if (this.selectedDoctorId !== null) {
       let startDateTime: string | undefined;
@@ -126,7 +138,7 @@ showSuccessModal(message: string) {
     }
 
   }
- 
+
 
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;

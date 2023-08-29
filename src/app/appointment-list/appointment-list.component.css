@@ -12,11 +12,7 @@ p {
     text-align: center;
     font-family: Georgia, 'Times New Roman', Times, serif;
   }
-  
-  nav{
-    display: flex;
-  justify-content: flex-start; 
-  }
+
   
   .narrow-date-input {
     max-width: 100px; 

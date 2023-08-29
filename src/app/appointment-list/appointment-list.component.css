@@ -74,11 +74,11 @@ p {
   }
   
   .appointments-table th {
-    width: 40%; 
+    width: 30%; 
   }
   
   .appointments-table td {
-    width: 40%; 
+    width: 30%; 
   }
 
 .table-flex {
@@ -90,7 +90,7 @@ p {
 
 .table-flex td {
   display: table-cell;
-  width: 33.33%; 
-  padding: 8px;
-  border: 2px solid #0c0c0c; 
+  width: 25%; 
+  padding: 3px;
+  border: 1.5px solid #0c0c0c; 
 }

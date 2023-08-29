@@ -18,10 +18,13 @@ export class AppointmentListComponent implements OnInit {
   patientAppointments: Appointment[] = [];
   selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
+  isDoctorSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
+  doctorSortOrder: 'asc' | 'desc' = 'asc';
   patientSortOrder: 'asc' | 'desc' = 'asc';
   startTimeSortOrder: 'asc' | 'desc' = 'asc';
   isDoctorSelected: boolean = false;
+  isPatientSelected: boolean= false;
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
   selectedPatientId: number | null = null;
@@ -138,7 +141,7 @@ showSuccessModal(message: string) {
     }
 
   }
-
+  
 
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
@@ -165,10 +168,30 @@ showSuccessModal(message: string) {
     });
   }
 
+  sortAppointmentsByDoctor() {
+    this.isDoctorSortedAscending = !this.isDoctorSortedAscending;
+    this.appointments.sort((a, b) => {
+      const nameA = a.doctorFullName.toLowerCase();
+      const nameB = b.doctorFullName.toLowerCase();
+
+      if (this.isDoctorSortedAscending) {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
+  }
+
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByPatient();
   }
+  
+  toggleDoctorSortOrder() {
+    this.doctorSortOrder = this.doctorSortOrder === 'asc' ? 'desc' : 'asc';
+    this.sortAppointmentsByDoctor();
+  }
+
   sortAppointmentsByStartTime() {
     this.appointments.sort((a, b) => {
       const startTimeA = new Date(a.appointmentDateStartTime).getTime();

@@ -43,7 +43,7 @@
     </div>
   </div>
 
-  <!-- Appointments Section for Doctors-->
+  <!-- Appointments Section -->
   <div class="row">
     <div class="col-md-12">
       <div ng-container *ngIf="isDoctorSelected && (selectedPatientId === null || selectedPatientId !== null)">
@@ -53,6 +53,10 @@
             <table class="table table-flex">
               <thead>
                 <tr>
+                  <th>
+                    Doctor
+                    <i [ngClass]="doctorSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="toggleDoctorSortOrder()"></i>
+                  </th>
                   <th>
                     Patient
                     <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="togglePatientSortOrder()"></i>
@@ -66,6 +70,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let appointment of appointments">
+                  <td>{{ appointment.doctorFullName }}</td>
                   <td>{{ appointment.patientFullName }}</td>
                   <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
                   <td>{{ appointment.appointmentDateEndTime | date:'medium' }} </td>
@@ -88,34 +93,4 @@
         </ng-template>
       </div>
     </div>
-  </div>
-    <!-- Appointments Section for Patients -->
-    <div class="row">
-      <div class="col-md-12">
-        <div ng-container *ngIf="selectedPatientId && (selectedDoctorId === null || selectedDoctorId !== null)">
-          <h5 class="h5">Appointments</h5>
-          <ng-container *ngIf="patientAppointments.length > 0; else noPatientAppointmentsMessage">
-            <div class="appointments-container">
-              <table class="table table-flex">
-                <thead>
-                  <tr>
-                    <th>Doctor</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let appointment of patientAppointments">
-                    <td>{{ appointment.doctorFullName }}</td>
-                    <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
-                    <td>{{ appointment.appointmentDateEndTime | date:'medium' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </ng-container>
-          <ng-template #noPatientAppointmentsMessage>
-            <p>No appointments available for the selected date.</p>
-          </ng-template>
-        </div>
-      </div>
+  </div> 

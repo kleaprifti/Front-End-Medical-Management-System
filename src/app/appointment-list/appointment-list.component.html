@@ -1,10 +1,9 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <label for="doctors">
-        <i class="bi bi-person-fill"></i> Doctors:
-      </label>
-      <div class="col-sm-10">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <label for="doctors">
+          <i class="bi bi-person-fill"></i> Doctors:
+        </label>
         <select
           name="doctors"
           class="form-control"
@@ -16,31 +15,33 @@
             {{ doctor.fullName }}
           </option>
         </select>
+      </div>
+  
+      <div class="col-md-4">
         <label for="patients">
           <i class="bi bi-person-fill"></i> Patients:
         </label>
         <select
-        name="patients"
-        class="form-control"
-        [(ngModel)]="selectedPatientId"
-        (ngModelChange)="onPatientSelection()"
-      >
-        <option [ngValue]="null"></option>
-        <option [ngValue]="patient.id" *ngFor="let patient of patients">
-          {{ patient.fullName }}
-        </option>
-      </select>
-    </div>
-
-    <div class="col-md-6">
-      <label for="date">
-       <i class="bi bi-calendar"></i>Date:
-      </label>
-      <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
-     </div>
+          name="patients"
+          class="form-control"
+          [(ngModel)]="selectedPatientId"
+          (ngModelChange)="onPatientSelection()"
+        >
+          <option [ngValue]="null"></option>
+          <option [ngValue]="patient.id" *ngFor="let patient of patients">
+            {{ patient.fullName }}
+          </option>
+        </select>
+      </div>
+  
+      <div class="col-md-4">
+        <label for="date">
+          <i class="bi bi-calendar"></i> Date:
+        </label>
+        <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
+      </div>
     </div>
   </div>
-
   <!-- Appointments Section -->
   <div class="row">
     <div class="col-md-12">

@@ -16,6 +16,7 @@ export class AppointmentListComponent implements OnInit {
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
+  mergedAppointments: Appointment[]= [];
   selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
   isDoctorSortedAscending: boolean = true;
@@ -186,22 +187,25 @@ showSuccessModal(message: string) {
       }
     }
 
-  searchAppointments() {
-    if (this.selectedDoctorId && this.selectedPatientId) {
-      this.appointmentService.getAppointmentsForPatient(
-        // this.selectedDoctorId,
-        this.selectedPatientId
-      ).subscribe(
-        appointments => {
-          // Handle the fetched appointments and display them
-          console.log('Matching appointments:', appointments);
-        },
-        error => {
-          console.log('Error occurred while fetching appointments:', error);
-        }
-      );
+    searchAppointments() {
+      if (this.selectedDoctorId && this.selectedPatientId) {
+        this.appointmentService.getDoctorAndPatientAppointments(
+          this.selectedDoctorId,
+          this.selectedPatientId
+        ).subscribe(
+          appointments => {
+            this.mergedAppointments = appointments;
+            this.sortMergedAppointments(); // Sort the merged appointments
+            console.log('Matching appointments:', this.mergedAppointments);
+          },
+          error => {
+            console.log('Error occurred while fetching merged appointments:', error);
+            this.mergedAppointments = []; 
+          }
+        );
+      }
     }
-  }
+    
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
     this.loadAppointments();
@@ -213,6 +217,32 @@ showSuccessModal(message: string) {
     this.loadAppointments();
   }
 
+  sortMergedAppointments() {
+    this.mergedAppointments.sort((a, b) => {
+
+      const doctorNameA = a.doctorFullName.toLowerCase();
+      const doctorNameB = b.doctorFullName.toLowerCase();
+      const doctorComparison = doctorNameA.localeCompare(doctorNameB);
+  
+      if (doctorComparison !== 0) {
+        return doctorComparison;
+      }
+  
+      const patientNameA = a.patientFullName.toLowerCase();
+      const patientNameB = b.patientFullName.toLowerCase();
+      const patientComparison = patientNameA.localeCompare(patientNameB);
+  
+      if (patientComparison !== 0) {
+        return patientComparison;
+      }
+  
+      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+  
+      return this.startTimeSortOrder === 'asc' ? startTimeA - startTimeB : startTimeB - startTimeA;
+    });
+  }
+  
   sortAppointmentsByPatient() {
     this.isPatientSortedAscending = !this.isPatientSortedAscending;
     this.appointments.sort((a, b) => {

@@ -42,12 +42,12 @@
       </div>
     </div>
   </div>
-  <!-- Appointments Section -->
+  
   <div class="row">
     <div class="col-md-12">
-      <div ng-container *ngIf="isDoctorSelected && (selectedPatientId === null || selectedPatientId !== null)">
+      <div ng-container *ngIf="(isDoctorSelected && (selectedPatientId === null || selectedPatientId !== null)|| isPatientSelected && (selectedDoctorId === null || selectedDoctorId !== null))">
         <h5 class="h5">Appointments</h5>
-        <ng-container *ngIf="appointments.length > 0; else noAppointmentsMessage">
+        <ng-container *ngIf="(appointments.length || patientAppointments.length )> 0; else noAppointmentsMessage">
           <div class="appointments-container">
             <table class="table table-flex">
               <thead>
@@ -68,14 +68,14 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let appointment of appointments">
+                <tr *ngFor="let appointment of appointments  , patientAppointments of patientAppointments">
                   <td>{{ appointment.doctorFullName }}</td>
                   <td>{{ appointment.patientFullName }}</td>
                   <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
                   <td>{{ appointment.appointmentDateEndTime | date:'medium' }} </td>
                     <button
                       *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
-                      (click)="onDeleteAppointment(appointment)"
+                      (click)="onDeleteAppointment(appointment || patientAppointments)"
                       class="btn btn-light btn-sm remove-button"
                       >
                       <i class="bi bi-trash-fill remove-icon"></i>

@@ -10,11 +10,6 @@ export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
 
-  getDoctorAndPatientAppointments(doctorId: number, patientId: number): Observable<Appointment[]> {
-    const url = `${this.apiUrl}/appointments/doctor/${doctorId}/patient/${patientId}`;
-    return this.http.get<Appointment[]>(url);
-  }
-  
   getAppointments(doctorId: number,  startDateTime?: string, endDateTime?: string): Observable<Appointment[]> {
     let url = `${this.apiUrl}/${doctorId}`;
   
@@ -55,4 +50,10 @@ getMergedAppointments(doctorId: number| null  , startDateTime: string | undefine
   const url = `${this.apiUrl}/appointments/${doctorId}/patient/${patientId}`;
   return this.http.get<Appointment[]>(url);
 }
+
+getDoctorAndPatientAppointments(doctorId: number, patientId: number): Observable<Appointment[]> {
+  const url = `${this.apiUrl}/appointments/doctor/${doctorId}/patient/${patientId}`;
+  return this.http.get<Appointment[]>(url);
+}
+
 }

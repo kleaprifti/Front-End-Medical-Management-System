@@ -45,9 +45,11 @@
   
   <div class="row">
     <div class="col-md-12">
-      <div ng-container *ngIf="(isDoctorSelected && (selectedPatientId === null || selectedPatientId !== null)|| isPatientSelected && (selectedDoctorId === null || selectedDoctorId !== null))">
+      <div ng-container *ngIf="  (isDoctorSelected && !selectedPatientId) ||
+      (isPatientSelected && !selectedDoctorId) ||
+      (isDoctorSelected && isPatientSelected) || (isPatientSelected && selectedPatientId)">
         <h5 class="h5">Appointments</h5>
-        <ng-container *ngIf="(appointments.length || patientAppointments.length )> 0; else noAppointmentsMessage">
+        <ng-container *ngIf="(appointments.length || patientAppointments.length || mergedAppointments.length)> 0; else noAppointmentsMessage">
           <div class="appointments-container">
             <table class="table table-flex">
               <thead>
@@ -75,7 +77,7 @@
                   <td>{{ appointment.appointmentDateEndTime | date:'medium' }} </td>
                     <button
                       *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
-                      (click)="onDeleteAppointment(appointment || patientAppointments)"
+                      (click)="onDeleteAppointment(appointment || patientAppointments ||mergedAppointments)"
                       class="btn btn-light btn-sm remove-button"
                       >
                       <i class="bi bi-trash-fill remove-icon"></i>

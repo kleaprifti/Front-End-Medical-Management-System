@@ -10,15 +10,6 @@ export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
 
-  // getAppointmentsPatient(doctorId: number, patientId: number | null): Observable<Appointment[]> {
-  //   let params = new HttpParams().set('doctorId', doctorId.toString());
-  //   if (patientId !== null) {
-  //     params = params.set('patientId', patientId.toString());
-  //   }
-
-  //   return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, { params });
-  // }
-
   getDoctorAndPatientAppointments(doctorId: number, patientId: number): Observable<Appointment[]> {
     const url = `${this.apiUrl}/appointments/doctor/${doctorId}/patient/${patientId}`;
     return this.http.get<Appointment[]>(url);
@@ -57,6 +48,11 @@ export class AppointmentService {
 
 getAppointmentsForPatient(patientId:  number| null ): Observable<Appointment[]> {
   const url = `${this.apiUrl}/appointments/patient/${patientId}`;
+  return this.http.get<Appointment[]>(url);
+}
+
+getMergedAppointments(doctorId: number| null  , startDateTime: string | undefined, endDateTime: string | undefined, patientId: number| null): Observable<Appointment[]> {
+  const url = `${this.apiUrl}/appointments/${doctorId}/patient/${patientId}`;
   return this.http.get<Appointment[]>(url);
 }
 }

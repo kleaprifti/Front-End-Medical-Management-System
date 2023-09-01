@@ -15,15 +15,24 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
 export class AppointmentListComponent implements OnInit {
   doctors: User[] = [];
   appointments: Appointment[] = [];
+  patientAppointments: Appointment[] = [];
+  mergedAppointments: Appointment[]= [];
   selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
+  isDoctorSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
+  doctorSortOrder: 'asc' | 'desc' = 'asc';
   patientSortOrder: 'asc' | 'desc' = 'asc';
   startTimeSortOrder: 'asc' | 'desc' = 'asc';
   isDoctorSelected: boolean = false;
+  isPatientSelected: boolean= false;
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
+  selectedPatientId: number | null = null;
+  patients: User[] = [];
+  selectedPatientAppointments: any[] = [];
 
+  
   constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
@@ -31,7 +40,12 @@ export class AppointmentListComponent implements OnInit {
       this.doctors = users;
       console.log('Doctors:', this.doctors);
     });
-    this.loadAppointments();
+    this.userService.getPatients().subscribe(patients => {
+      this.patients = patients;
+      console.log('Patients:', this.patients);
+    });
+    this.loadDoctorAppointments();
+    this.loadPatientAppointments();
 
   }
 
@@ -78,16 +92,20 @@ showSuccessModal(message: string) {
   });
 }
 
-
-
-
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     this.isDoctorSelected = !!this.selectedDoctorId;
-    this.loadAppointments();
+    this.loadDoctorAppointments();
+
   }
 
-   loadAppointments() {
+  onPatientSelection() {
+        console.log('Selected patient ID:', this.selectedPatientId);
+        this.isPatientSelected = !!this.selectedPatientId;
+        this.loadPatientAppointments();
+    }
+    
+  loadDoctorAppointments() {
     console.log('Loading appointments...');
     if (this.selectedDoctorId !== null) {
       let startDateTime: string | undefined;
@@ -100,45 +118,138 @@ showSuccessModal(message: string) {
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
       }
+  
       this.appointmentService.getAppointments(this.selectedDoctorId, startDateTime, endDateTime).subscribe(
         appointments => {
-          this.appointments = appointments;
-          this.sortAppointmentsByPatient();
-          this.appointments.sort((a, b) => {
-            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-            return startTimeA - startTimeB;
+          this.appointments = appointments.filter(a => {
+            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
           });
+  
+          if (this.selectedPatientId !== null) {
+            this.appointments = this.appointments.filter(a => a.patientId === this.selectedPatientId);
+          }
+  
+          console.log('**************');
           console.log(this.appointments);
+  
+          this.sortAppointmentsByTime();
         },
+  
+        error => {
+          console.log('Error occurred while loading appointments:', error);
+          this.appointments = [];
+        }
+      );
+    } else {
+      this.appointments = [];
+      this.patientAppointments = [];
+    }
+  }
+  
+  loadPatientAppointments() {
+    console.log('Loading appointments...');
+    if (this.selectedPatientId !== null) {
+      let startDateTime: string | undefined;
+      let endDateTime: string | undefined;
+      if (this.selectedDate) {
+        const start = new Date(this.selectedDate);
+        start.setHours(0, 0, 0, 0);
+        startDateTime = start.toISOString();
+        const end = new Date(this.selectedDate);
+        end.setHours(23, 59, 59, 999);
+        endDateTime = end.toISOString();
+      }
+  
+      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId).subscribe(
+        appointments => {
+          this.appointments = appointments.filter(a => {
+            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
+          });
+          
+          if (this.selectedDoctorId !== null) {
+            this.appointments = this.appointments.filter(a => a.doctorId === this.selectedDoctorId);
+          }
+  
+          console.log('**************');
+          console.log(this.appointments);
+          
+          this.sortAppointmentsByTime();
+        },
+        
         error => {
           console.log('Error occurred while loading appointments:', error);
           this.appointments = []; 
         }
       );
-      this.appointments.sort((a, b) => {
-        const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-        const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-        return startTimeB - startTimeA;
-      });
     } else {
-      this.appointments = []; 
+      this.appointments = [];
+      this.patientAppointments = [];
+    }
+  }
+  
+  sortAppointmentsByTime() {
+    this.appointments.sort((a, b) => {
+      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+      return startTimeA - startTimeB;
+    });
+  }
+    
+
+  onPatientSelectionChange(): void {
+    if (this.selectedPatientId) {
+      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId)
+        .subscribe(patientAppointments => {
+          this.patientAppointments = patientAppointments;
+        });
+      }
     }
 
-  }
- 
-
+    
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
-    this.loadAppointments();
+    this.loadDoctorAppointments();
+    this.loadPatientAppointments();
+
   }
   
  
   clearDate() {
     this.selectedDate = null; 
-    this.loadAppointments();
-  }
+    this.loadDoctorAppointments();
+    this.loadPatientAppointments();
+    }
 
+  sortMergedAppointments() {
+    this.mergedAppointments.sort((a, b) => {
+
+      const doctorNameA = a.doctorFullName.toLowerCase();
+      const doctorNameB = b.doctorFullName.toLowerCase();
+      const doctorComparison = doctorNameA.localeCompare(doctorNameB);
+  
+      if (doctorComparison !== 0) {
+        return doctorComparison;
+      }
+  
+      const patientNameA = a.patientFullName.toLowerCase();
+      const patientNameB = b.patientFullName.toLowerCase();
+      const patientComparison = patientNameA.localeCompare(patientNameB);
+  
+      if (patientComparison !== 0) {
+        return patientComparison;
+      }
+  
+      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+  
+      return this.startTimeSortOrder === 'asc' ? startTimeA - startTimeB : startTimeB - startTimeA;
+    });
+  }
+  
   sortAppointmentsByPatient() {
     this.isPatientSortedAscending = !this.isPatientSortedAscending;
     this.appointments.sort((a, b) => {
@@ -153,21 +264,39 @@ showSuccessModal(message: string) {
     });
   }
 
+  sortAppointmentsByDoctor() {
+    this.isDoctorSortedAscending = !this.isDoctorSortedAscending;
+    this.appointments.sort((a, b) => {
+      const nameA = a.doctorFullName.toLowerCase();
+      const nameB = b.doctorFullName.toLowerCase();
+
+      if (this.isDoctorSortedAscending) {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
+  }
+
   togglePatientSortOrder() {
     this.patientSortOrder = this.patientSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByPatient();
   }
+  
+  toggleDoctorSortOrder() {
+    this.doctorSortOrder = this.doctorSortOrder === 'asc' ? 'desc' : 'asc';
+    this.sortAppointmentsByDoctor();
+  }
+
   sortAppointmentsByStartTime() {
     this.appointments.sort((a, b) => {
       const startTimeA = new Date(a.appointmentDateStartTime).getTime();
       const startTimeB = new Date(b.appointmentDateStartTime).getTime();
 
-      // Adjust the sorting order based on startTimeSortOrder
       return this.startTimeSortOrder === 'asc' ? startTimeA - startTimeB : startTimeB - startTimeA;
     });
   }
 
-  // Toggle sorting order for start time
   toggleStartTimeSortOrder() {
     this.startTimeSortOrder = this.startTimeSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByStartTime();

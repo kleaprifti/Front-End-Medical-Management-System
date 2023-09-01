@@ -10,8 +10,7 @@ export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
 
-
-  getAppointments(doctorId: number, startDateTime?: string, endDateTime?: string): Observable<Appointment[]> {
+  getAppointments(doctorId: number,  startDateTime?: string, endDateTime?: string): Observable<Appointment[]> {
     let url = `${this.apiUrl}/${doctorId}`;
   
     if (startDateTime && endDateTime) {
@@ -42,5 +41,9 @@ export class AppointmentService {
     return this.http.delete<void>(url);
 }
 
+getAppointmentsForPatient(patientId:  number| null ): Observable<Appointment[]> {
+  const url = `${this.apiUrl}/patient/${patientId}`;
+  return this.http.get<Appointment[]>(url);
+}
 
 }

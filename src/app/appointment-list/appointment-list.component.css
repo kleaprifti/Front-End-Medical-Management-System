@@ -12,10 +12,18 @@ p {
     text-align: center;
     font-family: Georgia, 'Times New Roman', Times, serif;
   }
+  .container .row {
+    display: flex;
+    justify-content: space-between;
+  }
   
   .narrow-date-input {
-    max-width: 150px; 
+    max-width: 100px; 
     width: auto;
+  }
+
+  .col-md-6{
+    align-self: center;
   }
 
   .h5 {
@@ -28,10 +36,10 @@ p {
   }
   
   .remove-button {
-    color: black; /* Adjust the color to match your design */
+    color: black; 
   }
   .remove-icon {
-    color: black; /* Adjust the color to match your design */
+    color: black; 
   }
 
   .appointments-container {
@@ -65,11 +73,11 @@ p {
   }
   
   .appointments-table th {
-    width: 40%; 
+    width: 35%; 
   }
   
   .appointments-table td {
-    width: 45%; 
+    width: 30%; 
   }
 
 .table-flex {
@@ -81,7 +89,7 @@ p {
 
 .table-flex td {
   display: table-cell;
-  width: 33.33%; 
-  padding: 8px;
-  border: 2px solid #0c0c0c; 
+  width: 25%; 
+  padding: 3px;
+  border: 1.5px solid #0c0c0c; 
 }

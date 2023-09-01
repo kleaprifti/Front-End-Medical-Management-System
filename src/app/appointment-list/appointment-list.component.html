@@ -1,10 +1,9 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <label for="doctors">
-        <i class="bi bi-person-fill"></i> Doctors:
-      </label>
-      <div class="col-sm-10">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <label for="doctors">
+          <i class="bi bi-person-fill"></i> Doctors:
+        </label>
         <select
           name="doctors"
           class="form-control"
@@ -17,23 +16,48 @@
           </option>
         </select>
       </div>
-    </div>
-    <div class="col-md-6">
-      <label for="date">Date:</label>
-      <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
+  
+      <div class="col-md-4">
+        <label for="patients">
+          <i class="bi bi-person-fill"></i> Patients:
+        </label>
+        <select
+          name="patients"
+          class="form-control"
+          [(ngModel)]="selectedPatientId"
+          (ngModelChange)="onPatientSelection()"
+        >
+          <option [ngValue]="null"></option>
+          <option [ngValue]="patient.id" *ngFor="let patient of patients">
+            {{ patient.fullName }}
+          </option>
+        </select>
+      </div>
+  
+      <div class="col-md-4">
+        <label for="date">
+          <i class="bi bi-calendar"></i> Date:
+        </label>
+        <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
+      </div>
     </div>
   </div>
-
-  <!-- Appointments Section -->
+  
   <div class="row">
     <div class="col-md-12">
-      <div *ngIf="isDoctorSelected">
+      <div ng-container *ngIf="  (isDoctorSelected && !selectedPatientId) ||
+      (isPatientSelected && !selectedDoctorId) ||
+      (isDoctorSelected && isPatientSelected) || (isPatientSelected && selectedPatientId)">
         <h5 class="h5">Appointments</h5>
-        <ng-container *ngIf="appointments.length > 0; else noAppointmentsMessage">
+        <ng-container *ngIf="(appointments.length || patientAppointments.length || mergedAppointments.length)> 0; else noAppointmentsMessage">
           <div class="appointments-container">
             <table class="table table-flex">
               <thead>
                 <tr>
+                  <th>
+                    Doctor
+                    <i [ngClass]="doctorSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="toggleDoctorSortOrder()"></i>
+                  </th>
                   <th>
                     Patient
                     <i [ngClass]="patientSortOrder === 'asc' ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'" (click)="togglePatientSortOrder()"></i>
@@ -46,28 +70,26 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let appointment of appointments">
+                <tr *ngFor="let appointment of appointments ">
+                  <td>{{ appointment.doctorFullName }}</td>
                   <td>{{ appointment.patientFullName }}</td>
                   <td>{{ appointment.appointmentDateStartTime | date:'medium' }}</td>
                   <td>{{ appointment.appointmentDateEndTime | date:'medium' }} </td>
                     <button
                       *ngIf="isFutureDate(appointment.appointmentDateStartTime)"
-                      (click)="onDeleteAppointment(appointment)"
+                      (click)="onDeleteAppointment(appointment || patientAppointments ||mergedAppointments)"
                       class="btn btn-light btn-sm remove-button"
                       >
                       <i class="bi bi-trash-fill remove-icon"></i>
                     </button>
-                    
                 </tr>
-              </tbody>
-            </table>
+                </tbody>
+                </table>
           </div>
         </ng-container>
-
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>
         </ng-template>
       </div>
     </div>
-  </div>
-</div>
+  </div> 

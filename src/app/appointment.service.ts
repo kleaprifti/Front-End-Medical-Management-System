@@ -42,17 +42,7 @@ export class AppointmentService {
 }
 
 getAppointmentsForPatient(patientId:  number| null ): Observable<Appointment[]> {
-  const url = `${this.apiUrl}/appointments/patient/${patientId}`;
-  return this.http.get<Appointment[]>(url);
-}
-
-getMergedAppointments(doctorId: number| null  , startDateTime: string | undefined, endDateTime: string | undefined, patientId: number| null): Observable<Appointment[]> {
-  const url = `${this.apiUrl}/appointments/${doctorId}/patient/${patientId}`;
-  return this.http.get<Appointment[]>(url);
-}
-
-getDoctorAndPatientAppointments(doctorId: number, patientId: number): Observable<Appointment[]> {
-  const url = `${this.apiUrl}/appointments/doctor/${doctorId}/patient/${patientId}`;
+  const url = `${this.apiUrl}/patient/${patientId}`;
   return this.http.get<Appointment[]>(url);
 }
 

@@ -45,6 +45,7 @@ export class AppointmentListComponent implements OnInit {
       console.log('Patients:', this.patients);
     });
     this.loadDoctorAppointments();
+    this.loadPatientAppointments();
 
   }
 
@@ -103,18 +104,10 @@ showSuccessModal(message: string) {
         this.isPatientSelected = !!this.selectedPatientId;
         this.loadPatientAppointments();
     }
-
-  
-    onDoctorPatientSelection(){
-      console.log('Selected doctor ID and patient Id:' ,this.selectedDoctorId,this.selectedPatientId)
-      this.isPatientSelected = !!this.selectedPatientId;
-      this.isDoctorSelected = !!this.selectedDoctorId;
-      this.searchAppointments();
-    }
-  
+    
   loadDoctorAppointments() {
     console.log('Loading appointments...');
-    if (this.selectedDoctorId !== null ) {
+    if (this.selectedDoctorId !== null) {
       let startDateTime: string | undefined;
       let endDateTime: string | undefined;
       if (this.selectedDate) {
@@ -125,66 +118,39 @@ showSuccessModal(message: string) {
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
       }
+  
       this.appointmentService.getAppointments(this.selectedDoctorId, startDateTime, endDateTime).subscribe(
         appointments => {
-          this.appointments = appointments;
-          this.sortAppointmentsByPatient();
-          this.appointments.sort((a, b) => {
-            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-            return startTimeA - startTimeB;
+          this.appointments = appointments.filter(a => {
+            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
           });
+  
+          if (this.selectedPatientId !== null) {
+            this.appointments = this.appointments.filter(a => a.patientId === this.selectedPatientId);
+          }
+  
+          console.log('**************');
           console.log(this.appointments);
+  
+          this.sortAppointmentsByTime();
         },
-        
+  
         error => {
           console.log('Error occurred while loading appointments:', error);
-          this.appointments = []; 
+          this.appointments = [];
         }
       );
-      this.appointments.sort((a, b) => {
-        const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-        const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-        return startTimeB - startTimeA;
-      });
-    }  else if (this.selectedPatientId !== null) {
-      let startDateTime: string | undefined;
-      let endDateTime: string | undefined;
-      if (this.selectedDate) {
-        const start = new Date(this.selectedDate);
-        start.setHours(0, 0, 0, 0);
-        startDateTime = start.toISOString();
-        const end = new Date(this.selectedDate);
-        end.setHours(23, 59, 59, 999);
-        endDateTime = end.toISOString();
-      }
-      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId).subscribe(
-        patientAppointments => {
-          this.patientAppointments = patientAppointments;
-          this.sortAppointmentsByDoctor();
-          this.patientAppointments.sort((a, b) => {
-            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-            return startTimeA - startTimeB;
-          });
-          console.log(this.patientAppointments);
-        },
-        error => {
-          console.log('Error occurred while loading appointments:', error);
-          this.patientAppointments = []; 
-        }
-      );
-      
     } else {
       this.appointments = [];
       this.patientAppointments = [];
     }
   }
-
-
+  
   loadPatientAppointments() {
     console.log('Loading appointments...');
-    if (this.selectedPatientId !== null ) {
+    if (this.selectedPatientId !== null) {
       let startDateTime: string | undefined;
       let endDateTime: string | undefined;
       if (this.selectedDate) {
@@ -195,16 +161,23 @@ showSuccessModal(message: string) {
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
       }
-      this.appointmentService.getAppointments(this.selectedPatientId, startDateTime, endDateTime).subscribe(
+  
+      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId).subscribe(
         appointments => {
-          this.appointments = appointments;
-          this.sortAppointmentsByPatient();
-          this.appointments.sort((a, b) => {
-            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-            return startTimeA - startTimeB;
+          this.appointments = appointments.filter(a => {
+            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
           });
+          
+          if (this.selectedDoctorId !== null) {
+            this.appointments = this.appointments.filter(a => a.doctorId === this.selectedDoctorId);
+          }
+  
+          console.log('**************');
           console.log(this.appointments);
+          
+          this.sortAppointmentsByTime();
         },
         
         error => {
@@ -212,45 +185,20 @@ showSuccessModal(message: string) {
           this.appointments = []; 
         }
       );
-      this.appointments.sort((a, b) => {
-        const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-        const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-        return startTimeB - startTimeA;
-      });
-    }  else if (this.selectedDoctorId !== null) {
-      let startDateTime: string | undefined;
-      let endDateTime: string | undefined;
-      if (this.selectedDate) {
-        const start = new Date(this.selectedDate);
-        start.setHours(0, 0, 0, 0);
-        startDateTime = start.toISOString();
-        const end = new Date(this.selectedDate);
-        end.setHours(23, 59, 59, 999);
-        endDateTime = end.toISOString();
-      }
-      this.appointmentService.getMergedAppointments(this.selectedDoctorId ,startDateTime, endDateTime, this.selectedPatientId).subscribe(
-        mergedAppointments => {
-          this.mergedAppointments = mergedAppointments;
-          this.sortAppointmentsByDoctor();
-          this.sortAppointmentsByPatient();
-          this.mergedAppointments.sort((a, b) => {
-            const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-            const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-            return startTimeA - startTimeB;
-          });
-          console.log(this.mergedAppointments);
-        },
-        error => {
-          console.log('Error occurred while loading appointments:', error);
-          this.mergedAppointments = []; 
-        }
-      );
-      
     } else {
       this.appointments = [];
       this.patientAppointments = [];
     }
   }
+  
+  sortAppointmentsByTime() {
+    this.appointments.sort((a, b) => {
+      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
+      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
+      return startTimeA - startTimeB;
+    });
+  }
+    
 
   onPatientSelectionChange(): void {
     if (this.selectedPatientId) {
@@ -261,24 +209,6 @@ showSuccessModal(message: string) {
       }
     }
 
-    searchAppointments() {
-      if (this.selectedDoctorId && this.selectedPatientId) {
-        this.appointmentService.getDoctorAndPatientAppointments(
-          this.selectedDoctorId,
-          this.selectedPatientId
-        ).subscribe(
-          appointments => {
-            this.mergedAppointments = appointments;
-            this.sortMergedAppointments(); // Sort the merged appointments
-            console.log('Matching appointments:', this.mergedAppointments);
-          },
-          error => {
-            console.log('Error occurred while fetching merged appointments:', error);
-            this.mergedAppointments = []; 
-          }
-        );
-      }
-    }
     
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;

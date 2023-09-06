@@ -9,41 +9,28 @@ import { Appointment } from './appointment';
 export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
-
-  getAppointments(doctorId: number,  startDateTime?: string, endDateTime?: string): Observable<Appointment[]> {
-    let url = `${this.apiUrl}/${doctorId}`;
-  
-    if (startDateTime && endDateTime) {
-      url += `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
-    }
-  
-    return this.http.get<Appointment[]>(url);
-  }
-  
-  getAllAppointments(doctorId: number | null, startDateTime: string | undefined, endDateTime: string | undefined): Observable<Appointment[]> {
+  getAppointments(doctorId?: number, patientId?: number, selectedDate?: Date): Observable<Appointment[]> {
     let params = new HttpParams();
 
-    if (doctorId !== null) {
+    if (doctorId !== undefined) {
       params = params.append('doctorId', doctorId.toString());
     }
 
-    if (startDateTime !== undefined && endDateTime !== undefined) {
-      params = params.append('startDateTime', startDateTime);
-      params = params.append('endDateTime', endDateTime);
+    if (patientId !== undefined) {
+      params = params.append('patientId', patientId.toString());
     }
 
-    const url = `${this.apiUrl}/appointments`;
-    return this.http.get<Appointment[]>(url, { params: params });
+    if (selectedDate) {
+      params = params.append('selectedDate', selectedDate.toISOString());
+    }
+
+    return this.http.get<Appointment[]>(`${this.apiUrl}`, { params });
   }
+
   
   deleteAppointment(appointmentId: number, wantNotification: boolean): Observable<void> {
     const url = `${this.apiUrl}/${appointmentId}?wantNotification=${wantNotification}`;
     return this.http.delete<void>(url);
-}
-
-getAppointmentsForPatient(patientId:  number| null ): Observable<Appointment[]> {
-  const url = `${this.apiUrl}/patient/${patientId}`;
-  return this.http.get<Appointment[]>(url);
 }
 
 }

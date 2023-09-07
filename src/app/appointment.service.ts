@@ -9,22 +9,32 @@ import { Appointment } from './appointment';
 export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
-
-  getAppointments(doctorId: number,  startDateTime?: string, endDateTime?: string): Observable<Appointment[]> {
-    let url = `${this.apiUrl}/${doctorId}`;
-  
-    if (startDateTime && endDateTime) {
-      url += `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
-    }
-  
-    return this.http.get<Appointment[]>(url);
-  }
-  
-  getAllAppointments(doctorId: number | null, startDateTime: string | undefined, endDateTime: string | undefined): Observable<Appointment[]> {
+  getAppointments(doctorId: number | null, patientId: number | null, selectedDate?: Date): Observable<Appointment[]> {
     let params = new HttpParams();
 
     if (doctorId !== null) {
       params = params.append('doctorId', doctorId.toString());
+    }
+
+    if (patientId !== null) {
+      params = params.append('patientId', patientId.toString());
+    }
+
+    if (selectedDate) {
+      params = params.append('selectedDate', selectedDate.toISOString());
+    }
+
+    return this.http.get<Appointment[]>(`${this.apiUrl}`, { params });
+  }
+  
+getAllAppointments(doctorId: number | null, patientId: number | null,startDateTime: string | undefined, endDateTime: string | undefined): Observable<Appointment[]> {
+    let params = new HttpParams();
+
+    if (doctorId !== null) {
+      params = params.append('doctorId', doctorId.toString());
+    }
+    if (patientId !== null) {
+      params = params.append('doctorId', patientId.toString());
     }
 
     if (startDateTime !== undefined && endDateTime !== undefined) {
@@ -39,11 +49,6 @@ export class AppointmentService {
   deleteAppointment(appointmentId: number, wantNotification: boolean): Observable<void> {
     const url = `${this.apiUrl}/${appointmentId}?wantNotification=${wantNotification}`;
     return this.http.delete<void>(url);
-}
-
-getAppointmentsForPatient(patientId:  number| null ): Observable<Appointment[]> {
-  const url = `${this.apiUrl}/patient/${patientId}`;
-  return this.http.get<Appointment[]>(url);
 }
 
 }

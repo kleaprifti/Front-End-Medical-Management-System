@@ -32,7 +32,10 @@ export class AppointmentListComponent implements OnInit {
   patients: User[] = [];
   selectedPatientAppointments: any[] = [];
   isAddButtonEnabled: boolean = false;
-
+  doctorId: number | null = null;
+  patientId: number | null = null;
+  startDateTime: string | null = null;
+  endDateTime: string | null = null;
 
   
   constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
@@ -46,8 +49,7 @@ export class AppointmentListComponent implements OnInit {
       this.patients = patients;
       console.log('Patients:', this.patients);
     });
-    this.loadDoctorAppointments();
-    this.loadPatientAppointments();
+    this.loadAppointments();
 
   }
 
@@ -97,14 +99,15 @@ showSuccessModal(message: string) {
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     this.isDoctorSelected = !!this.selectedDoctorId;
-    this.loadDoctorAppointments();
     this.updateAddButtonState();
+    this.loadAppointments();
+
   }
 
   onPatientSelection() {
         console.log('Selected patient ID:', this.selectedPatientId);
         this.isPatientSelected = !!this.selectedPatientId;
-        this.loadPatientAppointments();
+        this.loadAppointments();
         this.updateAddButtonState();
 
     }
@@ -112,10 +115,12 @@ showSuccessModal(message: string) {
 updateAddButtonState() {
   this.isAddButtonEnabled = this.selectedDoctorId !== null && this.selectedPatientId !== null;
 }
-  loadDoctorAppointments() {
-    console.log('Loading appointments...');
-    if (this.selectedDoctorId !== null) {
-      let startDateTime: string | undefined;
+
+    
+  loadAppointments(): void {
+      console.log('Loading appointments...');
+      if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
+        let startDateTime: string | undefined;
       let endDateTime: string | undefined;
       if (this.selectedDate) {
         const start = new Date(this.selectedDate);
@@ -124,80 +129,26 @@ updateAddButtonState() {
         const end = new Date(this.selectedDate);
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
-      }
-  
-      this.appointmentService.getAppointments(this.selectedDoctorId, startDateTime, endDateTime).subscribe(
-        appointments => {
-          this.appointments = appointments.filter(a => {
-            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
-            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
-                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
-          });
-  
-          if (this.selectedPatientId !== null) {
-            this.appointments = this.appointments.filter(a => a.patientId === this.selectedPatientId);
+      }  if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
+      this.appointmentService.getAppointments(this.selectedDoctorId, this.selectedPatientId).subscribe(
+          appointments => {
+            this.appointments 
+            = appointments.filter(a => {
+                        const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+                        return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                               (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
+                      });          
+                    }, (error) => {
+            console.error('Error fetching appointments:', error);
           }
-  
-          console.log('**************');
-          console.log(this.appointments);
-  
-          this.sortAppointmentsByTime();
-        },
-  
-        error => {
-          console.log('Error occurred while loading appointments:', error);
-          this.appointments = [];
-        }
-      );
+        );
     } else {
       this.appointments = [];
-      this.patientAppointments = [];
     }
   }
-  
-  loadPatientAppointments() {
-    console.log('Loading appointments...');
-    if (this.selectedPatientId !== null) {
-      let startDateTime: string | undefined;
-      let endDateTime: string | undefined;
-      if (this.selectedDate) {
-        const start = new Date(this.selectedDate);
-        start.setHours(0, 0, 0, 0);
-        startDateTime = start.toISOString();
-        const end = new Date(this.selectedDate);
-        end.setHours(23, 59, 59, 999);
-        endDateTime = end.toISOString();
-      }
-  
-      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId).subscribe(
-        appointments => {
-          this.appointments = appointments.filter(a => {
-            const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
-            return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
-                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
-          });
-          
-          if (this.selectedDoctorId !== null) {
-            this.appointments = this.appointments.filter(a => a.doctorId === this.selectedDoctorId);
-          }
-  
-          console.log('**************');
-          console.log(this.appointments);
-          
-          this.sortAppointmentsByTime();
-        },
-        
-        error => {
-          console.log('Error occurred while loading appointments:', error);
-          this.appointments = []; 
-        }
-      );
-    } else {
-      this.appointments = [];
-      this.patientAppointments = [];
-    }
-  }
-  
+
+}
+
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {
       const startTimeA = new Date(a.appointmentDateStartTime).getTime();
@@ -207,9 +158,18 @@ updateAddButtonState() {
   }
     
 
+  onDoctorSelectionChange(): void {
+    if (this.selectedDoctorId) {
+      this.appointmentService.getAppointments(this.selectedDoctorId,null)
+        .subscribe(appointments => {
+          this.appointments = this.appointments;
+        });
+      }
+    }
+    
   onPatientSelectionChange(): void {
     if (this.selectedPatientId) {
-      this.appointmentService.getAppointmentsForPatient(this.selectedPatientId)
+      this.appointmentService.getAppointments(null,this.selectedPatientId)
         .subscribe(patientAppointments => {
           this.patientAppointments = patientAppointments;
         });
@@ -219,44 +179,14 @@ updateAddButtonState() {
     
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
-    this.loadDoctorAppointments();
-    this.loadPatientAppointments();
+    this.loadAppointments();
 
   }
-
- 
   clearDate() {
     this.selectedDate = null; 
-    this.loadDoctorAppointments();
-    this.loadPatientAppointments();
-    }
+    this.loadAppointments();
+    } 
 
-  sortMergedAppointments() {
-    this.mergedAppointments.sort((a, b) => {
-
-      const doctorNameA = a.doctorFullName.toLowerCase();
-      const doctorNameB = b.doctorFullName.toLowerCase();
-      const doctorComparison = doctorNameA.localeCompare(doctorNameB);
-  
-      if (doctorComparison !== 0) {
-        return doctorComparison;
-      }
-  
-      const patientNameA = a.patientFullName.toLowerCase();
-      const patientNameB = b.patientFullName.toLowerCase();
-      const patientComparison = patientNameA.localeCompare(patientNameB);
-  
-      if (patientComparison !== 0) {
-        return patientComparison;
-      }
-  
-      const startTimeA = new Date(a.appointmentDateStartTime).getTime();
-      const startTimeB = new Date(b.appointmentDateStartTime).getTime();
-  
-      return this.startTimeSortOrder === 'asc' ? startTimeA - startTimeB : startTimeB - startTimeA;
-    });
-  }
-  
   sortAppointmentsByPatient() {
     this.isPatientSortedAscending = !this.isPatientSortedAscending;
     this.appointments.sort((a, b) => {

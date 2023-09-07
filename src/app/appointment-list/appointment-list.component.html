@@ -33,16 +33,17 @@
           </option>
         </select>
       </div>
-  
       <div class="col-md-4">
         <label for="date">
           <i class="bi bi-calendar"></i> Date:
         </label>
         <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
       </div>
+      <div class="col-md-4 offset-md-9 text-right custom-add-button">
+        <button class="btn btn-primary" [disabled]="!isAddButtonEnabled"> Add </button>
+      </div>
     </div>
   </div>
-  
   <div class="row">
     <div class="col-md-12">
       <div ng-container *ngIf="  (isDoctorSelected && !selectedPatientId) ||

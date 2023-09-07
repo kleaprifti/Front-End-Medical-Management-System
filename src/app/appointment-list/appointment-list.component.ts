@@ -31,6 +31,7 @@ export class AppointmentListComponent implements OnInit {
   selectedPatientId: number | null = null;
   patients: User[] = [];
   selectedPatientAppointments: any[] = [];
+  isAddButtonEnabled: boolean = false;
   doctorId: number | null = null;
   patientId: number | null = null;
   startDateTime: string | null = null;
@@ -98,6 +99,7 @@ showSuccessModal(message: string) {
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     this.isDoctorSelected = !!this.selectedDoctorId;
+    this.updateAddButtonState();
     this.loadAppointments();
 
   }
@@ -106,7 +108,14 @@ showSuccessModal(message: string) {
         console.log('Selected patient ID:', this.selectedPatientId);
         this.isPatientSelected = !!this.selectedPatientId;
         this.loadAppointments();
+        this.updateAddButtonState();
+
     }
+    
+updateAddButtonState() {
+  this.isAddButtonEnabled = this.selectedDoctorId !== null && this.selectedPatientId !== null;
+}
+
     
   loadAppointments(): void {
       console.log('Loading appointments...');
@@ -173,7 +182,6 @@ showSuccessModal(message: string) {
     this.loadAppointments();
 
   }
-  
   clearDate() {
     this.selectedDate = null; 
     this.loadAppointments();

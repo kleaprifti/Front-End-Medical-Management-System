@@ -9,14 +9,14 @@ import { Appointment } from './appointment';
 export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointments';
   constructor(private http: HttpClient) { }
-  getAppointments(doctorId?: number, patientId?: number, selectedDate?: Date): Observable<Appointment[]> {
+  getAppointments(doctorId: number | null, patientId: number | null, selectedDate?: Date): Observable<Appointment[]> {
     let params = new HttpParams();
 
-    if (doctorId !== undefined) {
+    if (doctorId !== null) {
       params = params.append('doctorId', doctorId.toString());
     }
 
-    if (patientId !== undefined) {
+    if (patientId !== null) {
       params = params.append('patientId', patientId.toString());
     }
 
@@ -26,7 +26,25 @@ export class AppointmentService {
 
     return this.http.get<Appointment[]>(`${this.apiUrl}`, { params });
   }
+  
+getAllAppointments(doctorId: number | null, patientId: number | null,startDateTime: string | undefined, endDateTime: string | undefined): Observable<Appointment[]> {
+    let params = new HttpParams();
 
+    if (doctorId !== null) {
+      params = params.append('doctorId', doctorId.toString());
+    }
+    if (patientId !== null) {
+      params = params.append('doctorId', patientId.toString());
+    }
+
+    if (startDateTime !== undefined && endDateTime !== undefined) {
+      params = params.append('startDateTime', startDateTime);
+      params = params.append('endDateTime', endDateTime);
+    }
+
+    const url = `${this.apiUrl}/appointments`;
+    return this.http.get<Appointment[]>(url, { params: params });
+  }
   
   deleteAppointment(appointmentId: number, wantNotification: boolean): Observable<void> {
     const url = `${this.apiUrl}/${appointmentId}?wantNotification=${wantNotification}`;

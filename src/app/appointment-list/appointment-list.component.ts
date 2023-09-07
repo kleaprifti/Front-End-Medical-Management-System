@@ -17,7 +17,7 @@ export class AppointmentListComponent implements OnInit {
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
   mergedAppointments: Appointment[]= [];
-  selectedDoctorId: number | undefined = undefined;
+  selectedDoctorId: number | null = null;
   isPatientSortedAscending: boolean = true;
   isDoctorSortedAscending: boolean = true;
   isDateSortedAscending: boolean = false;
@@ -28,11 +28,11 @@ export class AppointmentListComponent implements OnInit {
   isPatientSelected: boolean= false;
   selectedDate: Date | null = new Date();
   DeleteAppointment: Appointment[] = [];
-  selectedPatientId: number | undefined = undefined;
+  selectedPatientId: number | null = null;
   patients: User[] = [];
   selectedPatientAppointments: any[] = [];
   doctorId: number | null = null;
-  patientId: number | undefined = undefined;
+  patientId: number | null = null;
   startDateTime: string | null = null;
   endDateTime: string | null = null;
 
@@ -48,8 +48,6 @@ export class AppointmentListComponent implements OnInit {
       this.patients = patients;
       console.log('Patients:', this.patients);
     });
-    // this.loadDoctorAppointments();
-    // this.loadPatientAppointments();
     this.loadAppointments();
 
   }
@@ -125,7 +123,8 @@ showSuccessModal(message: string) {
       }  if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
       this.appointmentService.getAppointments(this.selectedDoctorId, this.selectedPatientId).subscribe(
           appointments => {
-            this.appointments = appointments.filter(a => {
+            this.appointments 
+            = appointments.filter(a => {
                         const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
                         return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
                                (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
@@ -152,7 +151,7 @@ showSuccessModal(message: string) {
 
   onDoctorSelectionChange(): void {
     if (this.selectedDoctorId) {
-      this.appointmentService.getAppointments(this.selectedDoctorId)
+      this.appointmentService.getAppointments(this.selectedDoctorId,null)
         .subscribe(appointments => {
           this.appointments = this.appointments;
         });
@@ -161,7 +160,7 @@ showSuccessModal(message: string) {
     
   onPatientSelectionChange(): void {
     if (this.selectedPatientId) {
-      this.appointmentService.getAppointments(this.selectedPatientId)
+      this.appointmentService.getAppointments(null,this.selectedPatientId)
         .subscribe(patientAppointments => {
           this.patientAppointments = patientAppointments;
         });

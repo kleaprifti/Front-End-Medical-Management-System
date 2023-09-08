@@ -5,7 +5,9 @@ import { Appointment } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
-
+import { formatDate } from '@angular/common';
+import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-appointment-list',
@@ -36,9 +38,11 @@ export class AppointmentListComponent implements OnInit {
   patientId: number | null = null;
   startDateTime: string | null = null;
   endDateTime: string | null = null;
+  appointmentForm: FormGroup | undefined = undefined;
+  selectedDateTime!: string;
 
-  
-  constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
+  constructor(private userService: UserService,  private formBuilder: FormBuilder,
+    private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
     this.userService.getDoctors().subscribe(users => {
@@ -49,7 +53,12 @@ export class AppointmentListComponent implements OnInit {
       this.patients = patients;
       console.log('Patients:', this.patients);
     });
+    this.formBuilder.group({
+      dateTime: ['', Validators.required], 
+    });
+
     this.loadAppointments();
+
 
   }
 
@@ -93,8 +102,10 @@ showSuccessModal(message: string) {
   });
 
   successModalRef.content.confirmed.subscribe(() => {
+    this.loadAppointments();
   });
 }
+
 
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
@@ -238,5 +249,50 @@ updateAddButtonState() {
     this.startTimeSortOrder = this.startTimeSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByStartTime();
   }
+  
+  addAppointment() {
+    const selectedDateTime: string = this.selectedDateTime;
+    const formattedDateTime: string = formatDate(selectedDateTime, 'yyyy-MM-ddTHH:mm:ss', 'en-US');
 
+    const appointmentDto = {
+      doctorId: this.selectedDoctorId,
+      patientId: this.selectedPatientId,
+      appointmentDateStartTime: formattedDateTime,
+      appointmentDateEndTime: formattedDateTime,
+    };
+
+    this.appointmentService.addAppointment(appointmentDto).subscribe(
+      (response) => {
+        this.showSuccessModal('Appointment added successfully');
+        this.loadAppointments(); // Refresh the list of appointments
+        this.modalService.hide(1); // Close the add appointment modal
+      },
+      (error) => {
+        if (error.error.message === "It's not possible to add an appointment in the past") {
+          this.showErrorModal("It's not possible to add an appointment in the past");
+        } else if (error.error.message === 'The time slot is not available') {
+          this.showErrorModal('The time slot is not available');
+        } else {
+          console.error('Error adding appointment:', error);
+        }
+      }
+    );
+  }
+
+  
+  private showErrorModal(errorMessage: string) {
+    const errorModalRef: BsModalRef = this.modalService.show(ModalComponent, {
+      initialState: {
+        modalTitle: 'Error',
+        modalMessage: errorMessage
+      }
+    });
+  }
+
+  openAddAppointmentModal() {
+    this.modalService.show(AddAppointmentModalComponent, {
+      initialState: {
+      }
+    });
+  }
 }

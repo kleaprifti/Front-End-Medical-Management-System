@@ -14,6 +14,7 @@ import { DateFormatPipe } from './date-format.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalComponent } from './confirmation-modal/confirmation-modal.component';
+import { AddAppointmentModalComponent } from './add-appointment-modal/add-appointment-modal.component';
 
 
 
@@ -28,7 +29,8 @@ import { ModalComponent } from './confirmation-modal/confirmation-modal.componen
     AppointmentListComponent,
     DateFormatPipe,
     CalendarComponent,
-    ModalComponent
+    ModalComponent,
+    AddAppointmentModalComponent
   
   ],
   imports: [

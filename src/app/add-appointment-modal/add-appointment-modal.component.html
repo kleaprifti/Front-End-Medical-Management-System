@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <h4 class="modal-title">Create Appointment</h4>
+    <button type="button" class="close" (click)="cancel()">&times;</button>
+  </div>
+  
+  <div class="modal-body">
+    <input type="datetime-local" class="form-control" formControlName="dateTime">
+    <div class="form-group">
+        <label for="dateTime">Date and Time</label>
+        <input type="datetime-local" class="form-control" id="dateTime" formControlName="dateTime">
+      </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="confirm()">Confirm</button>
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+  </div>
+  

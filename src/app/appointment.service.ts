@@ -51,4 +51,8 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
+addAppointment(appointmentDto: any): Observable<Appointment[]> {
+  return this.http.post<Appointment[]>(`${this.apiUrl}/add`, appointmentDto)
+   
+}
 }

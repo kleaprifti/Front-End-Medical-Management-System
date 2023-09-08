@@ -40,6 +40,10 @@
         <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
       </div>
       <div class="col-md-4 offset-md-9 text-right custom-add-button">
+        <form (ngSubmit)="addAppointment()">
+          <input type="datetime-local" [(ngModel)]="startDateTime" required>
+          <button type="submit">Add</button>
+        </form>
         <button class="btn btn-primary" [disabled]="!isAddButtonEnabled"> Add </button>
       </div>
     </div>

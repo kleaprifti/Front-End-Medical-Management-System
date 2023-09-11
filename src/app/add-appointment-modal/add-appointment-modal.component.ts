@@ -1,9 +1,10 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
 import { UserService } from '../user.service';
+import { Appointment } from '../appointment';
 
 @Component({
   selector: 'app-add-appointment-modal',
@@ -12,17 +13,21 @@ import { UserService } from '../user.service';
 })
 export class AddAppointmentModalComponent {
   @Output() result: EventEmitter<string> = new EventEmitter<string>();
+  @Input() actionType: 'confirmation' | 'success' | undefined;
+  @Input() modalTitle: string | undefined;
+  @Input() modalMessage: string | undefined;
   errorMessage: string | undefined;
   appointmentDateTime!: string;
-  appointments: any[] = [];
-  actionType: string | undefined;
+  appointments: Appointment[] = [];
   appointmentForm: FormGroup;
   modalRef!: BsModalRef;
   confirmed!: boolean;
   doctorId!: number | null;
   patientId!: number | null;
+  successModalRef!: BsModalRef;
 
   constructor(
+    public bsModalRef: BsModalRef,
     private formBuilder: FormBuilder,
     private modalService: BsModalService,
     private appointmentService: AppointmentService,
@@ -30,22 +35,6 @@ export class AddAppointmentModalComponent {
   ) {
     this.appointmentForm = this.formBuilder.group({
       appointmentDateTime: ['', Validators.required],
-    });
-  }
-
-  showConfirmationModal() {
-    this.modalRef = this.modalService.show(ModalComponent, {
-      initialState: {
-        actionType: 'confirmation',
-        modalTitle: 'Confirm',
-        modalMessage: 'Are you sure you want to add this appointment?',
-      },
-    });
-
-    this.modalRef.content.confirmed.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.submitForm();
-      }
     });
   }
 
@@ -84,8 +73,11 @@ export class AddAppointmentModalComponent {
       },
     });
 
-    successModalRef.content.confirmed.subscribe(() => {
-      this.loadAppointments();
+   this.bsModalRef.content.confirmed.subscribe((confirmed: boolean) => {
+    this.loadAppointments();
+    if (confirmed) {
+      this.submitForm();
+    }  
     });
   }
 
@@ -100,6 +92,24 @@ export class AddAppointmentModalComponent {
     );
   }
 
+
+  showConfirmationModal() {
+    this.modalRef = this.modalService.show(ModalComponent, {
+      initialState: {
+        actionType: 'confirmation',
+        modalTitle: 'Confirm',
+        modalMessage: 'Are you sure you want to add this appointment?',
+      },
+    });
+
+    this.modalRef.content.confirmed.subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.submitForm();
+      }
+    });
+  }
+  
+
   showErrorModal(errorMessage: string) {
     const errorModalRef: BsModalRef = this.modalService.show(ModalComponent, {
       initialState: {
@@ -113,5 +123,6 @@ export class AddAppointmentModalComponent {
 
   cancel() {
     this.modalRef.hide();
+    this.bsModalRef.hide();
   }
 }

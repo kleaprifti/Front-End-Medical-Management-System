@@ -110,6 +110,7 @@ export class AddAppointmentModalComponent {
 
 
   showConfirmationModal() {
+  
     this.modalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'confirmation',
@@ -138,7 +139,7 @@ export class AddAppointmentModalComponent {
   }
 
   cancel() {
-    this.modalRef.hide();
     this.bsModalRef.hide();
+    this.modalRef.hide();
   }
 }

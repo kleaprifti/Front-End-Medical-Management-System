@@ -8,6 +8,7 @@
   <form (ngSubmit)="submitForm()">
     <div class="form-group">
       <label for="dateTime">Date and Time:</label>
+
       <input type="datetime-local" id="dateTime" [(ngModel)]="appointmentDateTime" required>
     </div>
 
@@ -17,6 +18,6 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
   <button type="button" class="btn btn-primary" (click)="showConfirmationModal()">Confirm</button>
+  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
 </div>

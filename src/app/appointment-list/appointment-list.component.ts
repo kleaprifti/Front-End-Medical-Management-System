@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { User } from '../user';
 import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
@@ -15,6 +15,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
+  @ViewChild(AddAppointmentModalComponent) addAppointmentModal: AddAppointmentModalComponent | undefined;
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
@@ -318,17 +319,38 @@ updateAddButtonState() {
 
 
   addAppointment() {
-    const initialState = {
-      selectedDoctorId: this.selectedDoctorId,
-      selectedPatientId: this.selectedPatientId,
-      selectedDate: this.selectedDate,
-    };
   
-    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, { initialState });
+  
+    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent);
     
     modalRef.content.addAppointment.subscribe(() => {
       this.loadAppointments();
     });
   }
+  // submitForm() {
+  //   const currentDate = new Date();
+  //   const selectedDate = new Date();
+
+  //   if (selectedDate <= currentDate) {
+  //     this.errorMessage = "It's not possible to add an appointment in the past";
+  //     this.showErrorModal('error');
+  //   } else {
+  //     this.appointmentService.addAppointment(this.selectedDoctorId,this.patientId,selectedDate).subscribe(
+  //       () => {
+  //         this.showSuccessModal('Appointment added successfully');
+  //         this.loadAppointments();
+  //       },
+  //       (error: { message: string }) => {
+  //         if (error.message === "It's not possible to add an appointment in the past") {
+  //           this.showErrorModal("It's not possible to add an appointment in the past");
+  //         } else if (error.message === 'The time slot is not available') {
+  //           this.showErrorModal('The time slot is not available');
+  //         } else {
+  //           console.error('Error adding appointment:', error);
+  //         }
+  //       }
+  //     );
+  //   }
+  // }
   
 }

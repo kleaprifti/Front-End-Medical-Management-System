@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
@@ -8,6 +8,7 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
 import { formatDate } from '@angular/common';
 import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {  ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-appointment-list',
@@ -15,7 +16,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
-  @ViewChild(AddAppointmentModalComponent) addAppointmentModal: AddAppointmentModalComponent | undefined;
+  @ViewChild(AddAppointmentModalComponent, { static: false }) addAppointmentModal!: AddAppointmentModalComponent;
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
@@ -37,8 +38,8 @@ export class AppointmentListComponent implements OnInit {
   isAddButtonEnabled: boolean = false;
   doctorId: number | null = null;
   patientId: number | null = null;
-  startDateTime: string | null = null;
-  endDateTime: string | null = null;
+  startDateTime: string | undefined = undefined;
+  endDateTime: string | undefined = undefined;
   appointmentForm: FormGroup | undefined = undefined;
   selectedDateTime!: string;
   bsModalRef: any;

@@ -49,7 +49,7 @@ export class AddAppointmentModalComponent {
       this.errorMessage = "It's not possible to add an appointment in the past";
       this.result.emit('error');
     } else {
-      this.appointmentService.addAppointment(this.selectedDoctorId,this.patientId,selectedDate).subscribe(
+      this.appointmentService.addAppointment(this.selectedDoctorId,this.selectedPatientId,selectedDate).subscribe(
         () => {
           this.showSuccessModal('Appointment added successfully');
           this.loadAppointments();
@@ -110,7 +110,6 @@ export class AddAppointmentModalComponent {
 
 
   showConfirmationModal() {
-  
     this.modalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'confirmation',

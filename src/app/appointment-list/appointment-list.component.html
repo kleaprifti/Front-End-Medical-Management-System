@@ -7,7 +7,7 @@
         <select
           name="doctors"
           class="form-control"
-          [(ngModel)]="selectedDoctorId"
+          [(ngModel)]="selectedDoctorId"[ngModelOptions]="{standalone: true}"
           (ngModelChange)="onDoctorSelection()"
         >
           <option [ngValue]="null"></option>
@@ -25,7 +25,7 @@
           name="patients"
           class="form-control"
           [(ngModel)]="selectedPatientId"
-          (ngModelChange)="onPatientSelection()"
+          (ngModelChange)="onPatientSelection()"[ngModelOptions]="{standalone: true}"
         >
           <option [ngValue]="null"></option>
           <option [ngValue]="patient.id" *ngFor="let patient of patients">

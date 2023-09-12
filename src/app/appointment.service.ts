@@ -51,8 +51,8 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
-  addAppointment(selectedDate: Date): Observable<any> {
-    const body = { date: selectedDate.toISOString() };
-    return this.http.post(`${this.apiUrl}/add`, body);
+  addAppointment(selectedDoctorId: number| null,selectedPatientId:number| null,selectedDate: Date): Observable<Appointment[]> {
+    const body = {Number: selectedDoctorId, selectedPatientId,date: selectedDate.toISOString() };
+    return this.http.post<Appointment[]>(`${this.apiUrl}/add`, body);
   }
 }

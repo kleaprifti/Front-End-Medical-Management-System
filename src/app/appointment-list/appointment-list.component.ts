@@ -324,7 +324,7 @@ updateAddButtonState() {
       selectedDate: this.selectedDate,
     };
   
-    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, {  });
+    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, { initialState });
     
     modalRef.content.addAppointment.subscribe(() => {
       this.loadAppointments();

@@ -25,7 +25,10 @@ export class AddAppointmentModalComponent {
   doctorId!: number | null;
   patientId!: number | null;
   successModalRef!: BsModalRef;
-
+  selectedPatientId: number | null = null;
+  selectedDoctorId: number | null = null;
+  isDoctorSelected: boolean = false;
+  isPatientSelected: boolean= false;
   constructor(
     public bsModalRef: BsModalRef,
     private formBuilder: FormBuilder,
@@ -46,7 +49,7 @@ export class AddAppointmentModalComponent {
       this.errorMessage = "It's not possible to add an appointment in the past";
       this.result.emit('error');
     } else {
-      this.appointmentService.addAppointment(selectedDate).subscribe(
+      this.appointmentService.addAppointment(this.selectedDoctorId,this.patientId,selectedDate).subscribe(
         () => {
           this.showSuccessModal('Appointment added successfully');
           this.loadAppointments();
@@ -63,7 +66,20 @@ export class AddAppointmentModalComponent {
       );
     }
   }
+  onDoctorSelection() {
+    console.log('Selected doctor ID:', this.selectedDoctorId);
+    this.isDoctorSelected = !!this.selectedDoctorId;
+    this.loadAppointments();
 
+  }
+
+  onPatientSelection() {
+        console.log('Selected patient ID:', this.selectedPatientId);
+        this.isPatientSelected = !!this.selectedPatientId;
+        this.loadAppointments();
+
+    }
+  
   showSuccessModal(message: string) {
     const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
       initialState: {

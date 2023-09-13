@@ -8,7 +8,7 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
 import { formatDate } from '@angular/common';
 import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import {  ViewChild, ElementRef } from '@angular/core';
+import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-appointment-list',
@@ -335,6 +335,7 @@ updateAddButtonState() {
       this.loadAppointments();
     });
   }
+
   // submitForm() {
   //   const currentDate = new Date();
   //   const selectedDate = new Date();

@@ -4,7 +4,8 @@
     <span>&times;</span>
   </button>
 </div>
-<div class="modal-body">
+<div class="modal-body" >
+  <p> {{ selectedDoctorId }} {{ selectedPatientId }}</p>
   <form (ngSubmit)="submitForm()">
     <div class="form-group">
       <label for="dateTime">Date and Time:</label>

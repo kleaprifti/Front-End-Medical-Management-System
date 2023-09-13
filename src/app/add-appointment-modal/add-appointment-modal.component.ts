@@ -3,7 +3,6 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
-import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
 
 @Component({
@@ -13,6 +12,8 @@ import { Appointment } from '../appointment';
 })
 export class AddAppointmentModalComponent {
   @Output() result: EventEmitter<string> = new EventEmitter<string>();
+  @Output() selectedDoctorId:  number | null = null;
+  @Output() selectedPatientId:  number | null = null;
   @Input() actionType: 'confirmation' | 'success' | undefined;
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
@@ -25,16 +26,13 @@ export class AddAppointmentModalComponent {
   doctorId!: number | null;
   patientId!: number | null;
   successModalRef!: BsModalRef;
-  selectedPatientId: number | null = null;
-  selectedDoctorId: number | null = null;
-  isDoctorSelected: boolean = false;
-  isPatientSelected: boolean= false;
+  isDoctorSelected: boolean = true;
+  isPatientSelected: boolean= true;
   constructor(
     public bsModalRef: BsModalRef,
     private formBuilder: FormBuilder,
     private modalService: BsModalService,
     private appointmentService: AppointmentService,
-    private userService: UserService 
   ) {
     this.appointmentForm = this.formBuilder.group({
       appointmentDateTime: ['', Validators.required],
@@ -66,6 +64,7 @@ export class AddAppointmentModalComponent {
       );
     }
   }
+
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     this.isDoctorSelected = !!this.selectedDoctorId;

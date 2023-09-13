@@ -268,12 +268,19 @@ updateAddButtonState() {
   //     this.loadAppointments(); // Refresh the list of appointments when a new appointment is added
   //   });
   // }
-  openAddAppointmentModal() {
-    this.bsModalRef = this.modalService.show(AddAppointmentModalComponent);
 
+
+  openAddAppointmentModal() {
+    const initialState = {
+      selectedDoctorName: this.selectedDoctorId,
+      selectedPatientName: this.selectedPatientId,
+    };
+  
+    this.bsModalRef = this.modalService.show(AddAppointmentModalComponent, {  });
+  
     this.bsModalRef.content.result.subscribe((result: string) => {
       if (result === 'success') {
-        this.loadAppointments(); 
+        this.loadAppointments();
       } else if (result === 'error') {
         this.errorMessage = this.bsModalRef.content.errorMessage;
       }

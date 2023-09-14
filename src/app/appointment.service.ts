@@ -51,8 +51,23 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
-  addAppointment(selectedDoctorId: number| null,selectedPatientId:number| null,selectedDate: Date): Observable<Appointment[]> {
-    const body = {Number: selectedDoctorId, selectedPatientId,date: selectedDate.toISOString() };
-    return this.http.post<Appointment[]>(`${this.apiUrl}/add`, body);
-  }
+addAppointment(appointmentDto: {
+  doctorId: number | null,
+  patientId: number | null,
+  date: Date
+}): Observable<Appointment[]> {
+  const startDateTime = appointmentDto.date.toISOString();
+  const endDateTime = new Date(appointmentDto.date.getTime() + 60 * 60 * 1000).toISOString(); // Adding 1 hour
+
+  const body = {
+    doctorId: appointmentDto.doctorId,
+    patientId: appointmentDto.patientId,
+    appointmentDateStartTime: startDateTime,
+    appointmentDateEndTime: endDateTime,
+  };
+  
+  return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, body);
+}
+
+
 }

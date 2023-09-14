@@ -7,7 +7,8 @@
         <select
           name="doctors"
           class="form-control"
-          [(ngModel)]="selectedDoctorId"[ngModelOptions]="{standalone: true}"
+          [(ngModel)]="selectedDoctorId"
+          [ngModelOptions]="{standalone: true}"
           (ngModelChange)="onDoctorSelection()"
         >
           <option [ngValue]="null"></option>
@@ -25,7 +26,8 @@
           name="patients"
           class="form-control"
           [(ngModel)]="selectedPatientId"
-          (ngModelChange)="onPatientSelection()"[ngModelOptions]="{standalone: true}"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onPatientSelection()"
         >
           <option [ngValue]="null"></option>
           <option [ngValue]="patient.id" *ngFor="let patient of patients">
@@ -39,11 +41,9 @@
         </label>
         <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
       </div>
-      <form (ngSubmit)="addAppointment()">
       <div class="col-md-4 offset-md-9 text-right custom-add-button">
-        <button class="btn btn-primary" [disabled]="!isAddButtonEnabled"> Add </button>
+        <button class="btn btn-primary"  (click)="openAddAppointmentModal()" [disabled]="!isAddButtonEnabled"> Add </button>
       </div>
-      </form>
     </div>
   </div>
   <div class="row">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { User } from '../user';
 import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
@@ -16,7 +16,7 @@ import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
-  @ViewChild(AddAppointmentModalComponent, { static: false }) addAppointmentModal!: AddAppointmentModalComponent;
+  @ViewChild('addAppointmentModal') addAppointmentModal!: AddAppointmentModalComponent;
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
@@ -42,7 +42,7 @@ export class AppointmentListComponent implements OnInit {
   endDateTime: string | undefined = undefined;
   appointmentForm: FormGroup | undefined = undefined;
   selectedDateTime!: string;
-  bsModalRef: any;
+  bsModalRef!: ModalComponent;
   errorMessage: any;
 
   constructor(private userService: UserService,  private formBuilder: FormBuilder,
@@ -65,6 +65,12 @@ export class AppointmentListComponent implements OnInit {
 
 
   }
+  @NgModule({
+    declarations: [
+      AddAppointmentModalComponent,
+    ],
+  })
+
 
   isFutureDate(dateStr: string): boolean {
     const currentDate = new Date().getTime();
@@ -255,111 +261,23 @@ updateAddButtonState() {
     this.sortAppointmentsByStartTime();
   }
   
-  
-  // openAddAppointmentModal() {
-  //   const initialState = {
-  //     selectedDoctorId: this.selectedDoctorId,
-  //     selectedPatientId: this.selectedPatientId,
-  //     selectedDate: this.selectedDate,
-  //   };
-
-  //   const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, { initialState });
-  //   modalRef.content.addAppointment.subscribe(() => {
-  //     this.loadAppointments(); // Refresh the list of appointments when a new appointment is added
-  //   });
-  // }
-
 
   openAddAppointmentModal() {
     const initialState = {
-      selectedDoctorName: this.selectedDoctorId,
-      selectedPatientName: this.selectedPatientId,
+      selectedDoctorId: this.selectedDoctorId,
+      selectedPatientId: this.selectedPatientId,
     };
   
-    this.bsModalRef = this.modalService.show(AddAppointmentModalComponent, {  });
+    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, {
+      initialState,
+    });
   
-    this.bsModalRef.content.result.subscribe((result: string) => {
+    modalRef.content.result.subscribe((result: string) => {
       if (result === 'success') {
         this.loadAppointments();
       } else if (result === 'error') {
-        this.errorMessage = this.bsModalRef.content.errorMessage;
+        this.errorMessage = modalRef.content.errorMessage;
       }
     });
-  }
-  // addAppointment() {
-  //   const selectedDateTime: string = this.selectedDateTime;
-  //   const formattedDateTime: string = formatDate(selectedDateTime, 'yyyy-MM-ddTHH:mm:ss', 'en-US');
-
-  //   const appointmentDto = {
-  //     doctorId: this.selectedDoctorId,
-  //     patientId: this.selectedPatientId,
-  //     appointmentDateStartTime: formattedDateTime,
-  //     appointmentDateEndTime: formattedDateTime,
-  //   };
-
-  //   this.appointmentService.addAppointment(appointmentDto).subscribe(
-  //     (response) => {
-  //       this.showSuccessModal('Appointment added successfully');
-  //       this.loadAppointments(); // Refresh the list of appointments
-  //       this.modalService.hide(1); // Close the add appointment modal
-  //     },
-  //     (error) => {
-  //       if (error.error.message === "It's not possible to add an appointment in the past") {
-  //         this.showErrorModal("It's not possible to add an appointment in the past");
-  //       } else if (error.error.message === 'The time slot is not available') {
-  //         this.showErrorModal('The time slot is not available');
-  //       } else {
-  //         console.error('Error adding appointment:', error);
-  //       }
-  //     }
-  //   );
-  // }
-
-  
-  private showErrorModal(errorMessage: string) {
-    const errorModalRef: BsModalRef = this.modalService.show(ModalComponent, {
-      initialState: {
-        modalTitle: 'Error',
-        modalMessage: errorMessage
-      }
-    });
-  }
-
-
-  addAppointment() {
-  
-  
-    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent);
-    
-    modalRef.content.addAppointment.subscribe(() => {
-      this.loadAppointments();
-    });
-  }
-
-  // submitForm() {
-  //   const currentDate = new Date();
-  //   const selectedDate = new Date();
-
-  //   if (selectedDate <= currentDate) {
-  //     this.errorMessage = "It's not possible to add an appointment in the past";
-  //     this.showErrorModal('error');
-  //   } else {
-  //     this.appointmentService.addAppointment(this.selectedDoctorId,this.patientId,selectedDate).subscribe(
-  //       () => {
-  //         this.showSuccessModal('Appointment added successfully');
-  //         this.loadAppointments();
-  //       },
-  //       (error: { message: string }) => {
-  //         if (error.message === "It's not possible to add an appointment in the past") {
-  //           this.showErrorModal("It's not possible to add an appointment in the past");
-  //         } else if (error.message === 'The time slot is not available') {
-  //           this.showErrorModal('The time slot is not available');
-  //         } else {
-  //           console.error('Error adding appointment:', error);
-  //         }
-  //       }
-  //     );
-  //   }
-  // }
-  
+  } 
 }

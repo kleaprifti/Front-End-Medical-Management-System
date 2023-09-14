@@ -1,63 +1,64 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
 import { Appointment } from '../appointment';
-import { AppointmentListComponent } from '../appointment-list/appointment-list.component';
-
 
 @Component({
   selector: 'app-add-appointment-modal',
   templateUrl: './add-appointment-modal.component.html',
   styleUrls: ['./add-appointment-modal.component.css']
 })
-export class AddAppointmentModalComponent {
+export class AddAppointmentModalComponent implements OnInit {
   @Output() result: EventEmitter<string> = new EventEmitter<string>();
-  @Input() selectedDoctorId:  number | null = null;
-  @Input() selectedPatientId:  number | null = null;
+  @Input() selectedDoctorId: number | null = null;
+  @Input() selectedPatientId: number | null = null;
   @Input() actionType: 'confirmation' | 'success' | undefined;
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
   errorMessage: string | undefined;
-  appointmentDateTime!: string;
   appointments: Appointment[] = [];
-  appointmentForm: FormGroup;
+  appointmentForm!: FormGroup;
   modalRef!: BsModalRef;
   confirmed!: boolean;
-  doctorId!: number | null;
-  patientId!: number | null;
-  successModalRef!: BsModalRef;
-  isDoctorSelected: boolean = true;
-  isPatientSelected: boolean= true;
-  AppointmentListComponent: any;
+  selectedDate: Date | undefined;
+  appointmentDateTime!: string| undefined;
+  isErrorVisible: boolean = true;
+
   constructor(
     public bsModalRef: BsModalRef,
     private formBuilder: FormBuilder,
     private modalService: BsModalService,
-    private appointmentService: AppointmentService,
-  ) {
+    private appointmentService: AppointmentService
+  ) {}
+
+  ngOnInit() {
+    console.log('Selected doctor ID:', this.selectedDoctorId);
+    console.log('Selected patient ID:', this.selectedPatientId);
+
     this.appointmentForm = this.formBuilder.group({
-      doctorId: [null, Validators.required],
-      patientId: [null, Validators.required],
+      doctorId: [this.selectedDoctorId, Validators.required],
+      patientId: [this.selectedPatientId, Validators.required],
       appointmentDateTime: ['', Validators.required],
     });
   }
-
+  
   submitForm() {
     const selectedDoctorId = this.selectedDoctorId;
     const selectedPatientId = this.selectedPatientId;
+    const selectedDate = this.appointmentForm.get('appointmentDateTime')?.value;
     const currentDate = new Date();
-    const selectedDate = new Date(this.appointmentDateTime);
 
     if (selectedDoctorId !== null && selectedPatientId !== null && selectedDate <= currentDate) {
       this.errorMessage = "It's not possible to add an appointment in the past";
+      this.isErrorVisible = true;
       this.result.emit('error');
     } else {
-      this.appointmentService.addAppointment(this.selectedDoctorId,this.selectedPatientId,selectedDate).subscribe(
+      this.appointmentService.addAppointment({ doctorId: selectedDoctorId, patientId: selectedPatientId, date: selectedDate }).subscribe(
         () => {
           this.showSuccessModal('Appointment added successfully');
-          this.AppointmentListComponent.loadAppointments();
+          this.loadAppointments();
         },
         (error: { message: string }) => {
           if (error.message === "It's not possible to add an appointment in the past") {
@@ -72,8 +73,43 @@ export class AddAppointmentModalComponent {
     }
   }
 
-  
+  loadAppointments(): void {
+    console.log('Loading appointments...');
+    if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
+      let startDateTime: string | undefined;
+      let endDateTime: string | undefined;
+      if (this.selectedDate) {
+        const start = new Date(this.selectedDate);
+        start.setHours(0, 0, 0, 0);
+        startDateTime = start.toISOString();
+        const end = new Date(this.selectedDate);
+        end.setHours(23, 59, 59, 999);
+        endDateTime = end.toISOString();
+      }
+      if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
+        this.appointmentService.getAppointments(this.selectedDoctorId, this.selectedPatientId).subscribe(
+          (appointments) => {
+            this.appointments = appointments.filter((a) => {
+              const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+              return (
+                (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                (!endDateTime || appointmentTime <= new Date(endDateTime).getTime())
+              );
+            });
+          },
+          (error) => {
+            console.error('Error fetching appointments:', error);
+          }
+        );
+      } else {
+        this.appointments = [];
+      }
+    }
+  }
+
   showSuccessModal(message: string) {
+    this.submitForm();
+  
     const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'success',
@@ -81,16 +117,17 @@ export class AddAppointmentModalComponent {
         modalMessage: message,
       },
     });
-
-   this.bsModalRef.content.confirmed.subscribe((confirmed: boolean) => {
-    this.AppointmentListComponent.loadAppointments();
-    if (confirmed) {
-      this.submitForm();
-    }  
+  
+    successModalRef.content.confirmed.subscribe((confirmed: boolean) => {
+      this.loadAppointments();
+      if (confirmed) {
+        this.submitForm();
+      }
     });
   }
-  
+
   showConfirmationModal() {
+    this.loadAppointments();
     this.modalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'confirmation',
@@ -101,11 +138,11 @@ export class AddAppointmentModalComponent {
 
     this.modalRef.content.confirmed.subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.submitForm();
+            this.submitForm();
+
       }
     });
   }
-  
 
   showErrorModal(errorMessage: string) {
     const errorModalRef: BsModalRef = this.modalService.show(ModalComponent, {
@@ -114,9 +151,16 @@ export class AddAppointmentModalComponent {
         modalMessage: errorMessage,
       },
     });
-
-    errorModalRef.content.confirmed.subscribe(() => {});
+  
+    errorModalRef.content.confirmed.subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log('Error modal confirmed');
+      } else {
+        console.log('Error modal canceled');
+      }
+    });
   }
+  
 
   cancel() {
     this.bsModalRef.hide();

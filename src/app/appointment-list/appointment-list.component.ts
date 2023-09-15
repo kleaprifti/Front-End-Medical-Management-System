@@ -44,6 +44,7 @@ export class AppointmentListComponent implements OnInit {
   selectedDateTime!: string;
   bsModalRef!: ModalComponent;
   errorMessage: any;
+  startTimeToCheck!: string;
 
   constructor(private userService: UserService,  private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,private modalService: BsModalService) {}
@@ -62,7 +63,14 @@ export class AppointmentListComponent implements OnInit {
     });
 
     this.loadAppointments();
-
+    this.appointmentService.getAllAppointments(this.doctorId,this.patientId,this.startDateTime,this.endDateTime).subscribe(
+      (data) => {
+        this.appointments = data;
+      },
+      (error) => {
+        console.error('Error fetching appointments', error);
+      }
+    );
 
   }
   @NgModule({
@@ -100,6 +108,10 @@ onDeleteAppointment(appointment: Appointment) {
       }
     );
   });
+}
+
+isDuplicateStartTime(): boolean {
+  return this.appointments.some(appointment => appointment.appointmentDateStartTime === this.startTimeToCheck);
 }
 
 showSuccessModal(message: string) {

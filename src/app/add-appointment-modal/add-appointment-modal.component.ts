@@ -53,7 +53,7 @@ export class AddAppointmentModalComponent implements OnInit {
     });
   }
   
-  
+
   submitForm() {
     const selectedDoctorId = this.selectedDoctorId;
     const selectedPatientId = this.selectedPatientId;
@@ -61,34 +61,54 @@ export class AddAppointmentModalComponent implements OnInit {
     const endDateTime = this.appointmentForm.get('appointmentDateEndTime')?.value;
     const currentTime = new Date();
   
- 
-    if (selectedDoctorId !== null && selectedPatientId !== null && startDateTime <= currentTime) {
+    if (startDateTime <= currentTime) {
       this.errorMessage = "It's not possible to add an appointment in the past";
       this.isErrorVisible = true;
       this.result.emit('error');
+    } else if (this.isTimeSlotAvailable(startDateTime, endDateTime)) {
+      this.errorMessage = 'The time slot is not available';
+      this.isErrorVisible = true;
+      this.result.emit('error');
     } else {
-      this.appointmentService.addAppointment({
-        doctorId: selectedDoctorId,
-        patientId: selectedPatientId,
-        startDateTime: startDateTime,
-        endDateTime: endDateTime
-      }).subscribe(
-        () => {
-          this.showSuccessModal('Appointment added successfully');
-          this.loadAppointments();
-        },
-        (error: { message: string }) => {
-          if (error.message === "It's not possible to add an appointment in the past") {
-            this.showErrorModal("It's not possible to add an appointment in the past");
-          } else if (error.message === 'The time slot is not available') {
-            this.showErrorModal('The time slot is not available');
-          } else {
-            console.error('Error adding appointment:', error);
+      if (selectedDoctorId !== null && selectedPatientId !== null) {
+        this.appointmentService.addAppointment({
+          doctorId: selectedDoctorId,
+          patientId: selectedPatientId,
+          startDateTime: startDateTime,
+          endDateTime: endDateTime
+        }).subscribe(
+          () => {
+            this.showSuccessModal('Appointment added successfully');
+            this.loadAppointments();
+          },
+          (error: { message: string }) => {
+            if (error.message === 'The time slot is not available') {
+              this.showErrorModal('The time slot is not available');
+            } else {
+              console.error('Error adding appointment:', error);
+            }
           }
-        }
-      );
+        );
+      } else {
+        this.errorMessage = 'Please select both a doctor and a patient.';
+        this.isErrorVisible = true;
+        this.result.emit('error');
+      }
     }
   }
+  
+  isTimeSlotAvailable(newStartTime: Date, newEndTime: Date): boolean {
+    for (const appointment of this.appointments) {
+      const existingStartTime = new Date(appointment.appointmentDateStartTime);
+      const existingEndTime = new Date(appointment.appointmentDateEndTime);
+  
+      if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
+        return true; 
+      }
+    }
+  
+    return false;
+    }
   
   loadAppointments(): void {
     console.log('Loading appointments...');

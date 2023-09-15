@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Appointment } from './appointment';
 
 @Injectable({
@@ -51,43 +51,11 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
-addAppointment(appointmentDto: {
-  doctorId: number | null,
-  patientId: number | null,
-  startDateTime: Date
-  endDateTime: Date
-
-}): Observable<Appointment[]> {
-  const startDateTime = appointmentDto.startDateTime.toISOString();
-  const endDateTime = appointmentDto.endDateTime.toISOString();
-
-  const body = {
-    doctorId: appointmentDto.doctorId,
-    patientId: appointmentDto.patientId,
-    appointmentDateStartTime: startDateTime,
-    appointmentDateEndTime: endDateTime,
-  };
-  
-  return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, body);
-}
-
-
-findConflictingAppointments(
-  patientId: number,
-  doctorId: number,
-  startDateTime: string,
-  endDateTime: string
-): Observable<Appointment[]> {
-  const params = {
-    patientId: patientId.toString(),
-    doctorId: doctorId.toString(),
-    startDateTime,
-    endDateTime,
-  };
-
-  return this.http.get<Appointment[]>(
-    `${this.apiUrl}/findConflictingAppointments`,
-    { params }
+addAppointment(appointmentDto: any): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/addAppointment`, appointmentDto).pipe(
+    catchError((error: any) => {
+      return throwError(error);
+    })
   );
 }
 

@@ -4,6 +4,7 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
 import { Appointment } from '../appointment';
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-add-appointment-modal',
@@ -17,13 +18,15 @@ export class AddAppointmentModalComponent implements OnInit {
   @Input() actionType: 'confirmation' | 'success' | undefined;
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
+  datepickerConfig: Partial<BsDatepickerConfig>;
   errorMessage: string | undefined;
   appointments: Appointment[] = [];
   appointmentForm!: FormGroup;
   modalRef!: BsModalRef;
   confirmed!: boolean;
   selectedDate: Date | undefined;
-  appointmentDateTime!: string| undefined;
+  appointmentDateStartTime!: string| undefined;
+  appointmentDateEndTime!: string| undefined;
   isErrorVisible: boolean = true;
 
   constructor(
@@ -31,7 +34,11 @@ export class AddAppointmentModalComponent implements OnInit {
     private formBuilder: FormBuilder,
     private modalService: BsModalService,
     private appointmentService: AppointmentService
-  ) {}
+  ) { this.datepickerConfig = Object.assign({}, {
+    containerClass: 'theme-dark-blue',
+    dateInputFormat: 'YYYY-MM-DD HH:mm', 
+    showWeekNumbers: false,
+  });}
 
   ngOnInit() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
@@ -40,22 +47,32 @@ export class AddAppointmentModalComponent implements OnInit {
     this.appointmentForm = this.formBuilder.group({
       doctorId: [this.selectedDoctorId, Validators.required],
       patientId: [this.selectedPatientId, Validators.required],
-      appointmentDateTime: ['', Validators.required],
+      appointmentDateStartTime: ['', Validators.required],
+      appointmentDateEndTime: ['', Validators.required],
+
     });
   }
+  
   
   submitForm() {
     const selectedDoctorId = this.selectedDoctorId;
     const selectedPatientId = this.selectedPatientId;
-    const selectedDate = this.appointmentForm.get('appointmentDateTime')?.value;
-    const currentDate = new Date();
-
-    if (selectedDoctorId !== null && selectedPatientId !== null && selectedDate <= currentDate) {
+    const startDateTime = this.appointmentForm.get('appointmentDateStartTime')?.value;
+    const endDateTime = this.appointmentForm.get('appointmentDateEndTime')?.value;
+    const currentTime = new Date();
+  
+ 
+    if (selectedDoctorId !== null && selectedPatientId !== null && startDateTime <= currentTime) {
       this.errorMessage = "It's not possible to add an appointment in the past";
       this.isErrorVisible = true;
       this.result.emit('error');
     } else {
-      this.appointmentService.addAppointment({ doctorId: selectedDoctorId, patientId: selectedPatientId, date: selectedDate }).subscribe(
+      this.appointmentService.addAppointment({
+        doctorId: selectedDoctorId,
+        patientId: selectedPatientId,
+        startDateTime: startDateTime,
+        endDateTime: endDateTime
+      }).subscribe(
         () => {
           this.showSuccessModal('Appointment added successfully');
           this.loadAppointments();
@@ -72,7 +89,7 @@ export class AddAppointmentModalComponent implements OnInit {
       );
     }
   }
-
+  
   loadAppointments(): void {
     console.log('Loading appointments...');
     if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {

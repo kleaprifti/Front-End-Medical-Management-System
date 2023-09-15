@@ -54,10 +54,12 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
 addAppointment(appointmentDto: {
   doctorId: number | null,
   patientId: number | null,
-  date: Date
+  startDateTime: Date
+  endDateTime: Date
+
 }): Observable<Appointment[]> {
-  const startDateTime = appointmentDto.date.toISOString();
-  const endDateTime = new Date(appointmentDto.date.getTime() + 60 * 60 * 1000).toISOString(); // Adding 1 hour
+  const startDateTime = appointmentDto.startDateTime.toISOString();
+  const endDateTime = appointmentDto.endDateTime.toISOString();
 
   const body = {
     doctorId: appointmentDto.doctorId,
@@ -69,5 +71,24 @@ addAppointment(appointmentDto: {
   return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, body);
 }
 
+
+findConflictingAppointments(
+  patientId: number,
+  doctorId: number,
+  startDateTime: string,
+  endDateTime: string
+): Observable<Appointment[]> {
+  const params = {
+    patientId: patientId.toString(),
+    doctorId: doctorId.toString(),
+    startDateTime,
+    endDateTime,
+  };
+
+  return this.http.get<Appointment[]>(
+    `${this.apiUrl}/findConflictingAppointments`,
+    { params }
+  );
+}
 
 }

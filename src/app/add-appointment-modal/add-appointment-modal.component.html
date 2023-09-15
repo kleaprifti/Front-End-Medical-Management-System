@@ -5,13 +5,12 @@
   </button>
 </div>
 <div class="modal-body" >
-  <p> {{ selectedDoctorId }} {{ selectedPatientId }}</p>
   <form (ngSubmit)="submitForm()">
     <div class="form-group">
-      <label for="dateTime">Date and Time:</label>
-
-      <input type="datetime-local" id="dateTime" [(ngModel)]="appointmentDateTime" required>
+      <label for="startDateTime">Start Date and Time:</label>
+      <input type="datetime-local" id="startDateTime" [(ngModel)]="appointmentDateStartTime" required>
     </div>
+
 
     <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}

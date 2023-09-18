@@ -28,6 +28,11 @@ export class AddAppointmentModalComponent implements OnInit {
   appointmentDateStartTime!: string| undefined;
   appointmentDateEndTime!: string| undefined;
   isErrorVisible: boolean = true;
+  minDate: string = new Date().toISOString().split('T')[0]; 
+  selectedDateTime: Date = new Date(); 
+  selectedTime: string = ''; 
+  selectedStartDate: any;
+  selectedEndDate: any
 
   constructor(
     public bsModalRef: BsModalRef,
@@ -74,8 +79,8 @@ export class AddAppointmentModalComponent implements OnInit {
         this.appointmentService.addAppointment({
           doctorId: selectedDoctorId,
           patientId: selectedPatientId,
-          startDateTime: startDateTime,
-          endDateTime: endDateTime
+          startDate: startDateTime,
+          endDate: endDateTime
         }).subscribe(
           () => {
             this.showSuccessModal('Appointment added successfully');

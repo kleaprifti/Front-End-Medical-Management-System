@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
@@ -36,6 +37,7 @@ import { AddAppointmentModalComponent } from './add-appointment-modal/add-appoin
   imports: [
     BrowserModule,
     FormsModule,
+    BsDatepickerModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
     ModalModule.forRoot(),

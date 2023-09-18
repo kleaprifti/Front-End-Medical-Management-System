@@ -1,15 +1,21 @@
-<div class="modal-header">
+<!-- <div class="modal-header">
   <h5 class="modal-title">Add Appointment</h5>
   <button type="button" class="close" (click)="cancel()">
     <span>&times;</span>
   </button>
 </div>
 <div class="modal-body" >
-  <form (ngSubmit)="submitForm()">
+  <form (ngSubmit)="submitForm()" #f="ngForm">
     <div class="form-group">
-      <label for="startDateTime">Start Date and Time:</label>
-      <input type="datetime-local" id="startDateTime" [(ngModel)]="appointmentDateStartTime" required>
-    </div>
+      <label for="startDateTime">Appointment Date and Time:</label>
+      <input
+      type="date"
+      class="form-control"
+      id="appointmentDate"
+      [(ngModel)]="selectedDate"
+      [min]="minDate"
+    />
+  </div>
 
 
     <div *ngIf="errorMessage" class="alert alert-danger">
@@ -19,5 +25,48 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="showConfirmationModal()">Confirm</button>
+  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+</div> -->
+<div class="modal-header">
+  <h5 class="modal-title">Add Appointment</h5>
+  <button type="button" class="close" (click)="cancel()">
+    <span>&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form (ngSubmit)="submitForm()" #f="ngForm">
+    <div class="form-group">
+      <label for="startDateTime">Start Date and Time:</label>
+      <input
+        type="datetime-local"
+        class="form-control"
+        id="startDateTime"
+        name="startDateTime"
+        [(ngModel)]="selectedStartDate"
+        [min]="minDate"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="endDateTime">End Date and Time:</label>
+      <input
+        type="datetime-local"
+        class="form-control"
+        id="endDateTime"
+        name="endDateTime"
+        [(ngModel)]="selectedEndDate"
+        [min]="selectedStartDate" 
+        required
+      />
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="showConfirmationModal()" (click)="submitForm()"> Confirm</button>
   <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
 </div>

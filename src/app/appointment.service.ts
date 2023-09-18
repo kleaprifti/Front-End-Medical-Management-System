@@ -42,7 +42,7 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
       params = params.append('endDateTime', endDateTime);
     }
 
-    const url = `${this.apiUrl}/appointments`;
+    const url = `${this.apiUrl}`;
     return this.http.get<Appointment[]>(url, { params: params });
   }
   
@@ -51,12 +51,30 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
-addAppointment(appointmentDto: any): Observable<Appointment[]> {
-  return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, appointmentDto).pipe(
-    catchError((error: any) => {
-      return throwError(error);
-    })
-  );
+// addAppointment(appointmentDto: any): Observable<Appointment[]> {
+//   return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, appointmentDto).pipe(
+//     catchError((error: any) => {
+//       return throwError(error);
+//     })
+//   );
+// }
+addAppointment(appointmentDto: {
+  doctorId: number | null,
+  patientId: number | null,
+  startDate: Date, 
+  endDate: Date, 
+}): Observable<Appointment[]> {
+  const startDateTime = appointmentDto.startDate.toISOString();
+  const endDateTime = appointmentDto.endDate.toISOString();
+
+  const body = {
+    doctorId: appointmentDto.doctorId,
+    patientId: appointmentDto.patientId,
+    appointmentDateStartTime: startDateTime,
+    appointmentDateEndTime: endDateTime,
+  };
+
+  return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, body);
 }
 
 }

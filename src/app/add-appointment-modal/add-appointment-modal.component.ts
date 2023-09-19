@@ -18,7 +18,7 @@ export class AddAppointmentModalComponent implements OnInit {
   @Input() actionType: 'confirmation' | 'success' | undefined;
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
-  datepickerConfig: Partial<BsDatepickerConfig>;
+  // datepickerConfig: Partial<BsDatepickerConfig>;
   errorMessage: string | undefined;
   appointments: Appointment[] = [];
   appointmentForm!: FormGroup;
@@ -40,11 +40,7 @@ export class AddAppointmentModalComponent implements OnInit {
     private appointmentService: AppointmentService,
     private formBuilder: FormBuilder
 
-  ) { this.datepickerConfig = Object.assign({}, {
-    containerClass: 'theme-dark-blue',
-    dateInputFormat: 'YYYY-MM-DD HH:mm', 
-    showWeekNumbers: false,
-  });}
+  ) { }
 
   ngOnInit() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
@@ -72,6 +68,7 @@ export class AddAppointmentModalComponent implements OnInit {
         (response) => {
           console.log('Success ', response);
           this.errorMessage = undefined;
+          this.showSuccessModal('Appointment added successfully.');
 
         },
         (error) => {
@@ -95,6 +92,7 @@ export class AddAppointmentModalComponent implements OnInit {
   
     successModalRef.content.confirmed.subscribe((confirmed: boolean) => {
       if (confirmed) {
+
       }
     });
   }

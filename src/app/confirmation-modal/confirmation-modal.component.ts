@@ -27,5 +27,6 @@ export class ModalComponent {
   get showYesButton(): boolean {
     return this.actionType === 'confirmation';
   }
+  
 }
 

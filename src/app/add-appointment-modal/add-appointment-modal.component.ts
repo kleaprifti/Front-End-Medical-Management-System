@@ -5,7 +5,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
 import { Appointment } from '../appointment';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { catchError } from 'rxjs';
 
 @Component({
   selector: 'app-add-appointment-modal',
@@ -61,7 +60,6 @@ export class AddAppointmentModalComponent implements OnInit {
     
   }
   
-  
   submitForm() {
       const formValue = this.appointmentForm.value;
 
@@ -73,6 +71,8 @@ export class AddAppointmentModalComponent implements OnInit {
       }).subscribe(
         (response) => {
           console.log('Success ', response);
+          this.errorMessage = undefined;
+
         },
         (error) => {
           console.log("error");
@@ -81,40 +81,6 @@ export class AddAppointmentModalComponent implements OnInit {
         }
       );
  
-  }
-  
-  loadAppointments(): void {
-    console.log('Loading appointments...');
-    if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
-      let startDateTime: string | undefined;
-      let endDateTime: string | undefined;
-      if (this.selectedDate) {
-        const start = new Date(this.selectedDate);
-        start.setHours(0, 0, 0, 0);
-        startDateTime = start.toISOString();
-        const end = new Date(this.selectedDate);
-        end.setHours(23, 59, 59, 999);
-        endDateTime = end.toISOString();
-      }
-      if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
-        this.appointmentService.getAppointments(this.selectedDoctorId, this.selectedPatientId).subscribe(
-          (appointments) => {
-            this.appointments = appointments.filter((a) => {
-              const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
-              return (
-                (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
-                (!endDateTime || appointmentTime <= new Date(endDateTime).getTime())
-              );
-            });
-          },
-          (error) => {
-            console.error('Error fetching appointments:', error);
-          }
-        );
-      } else {
-        this.appointments = [];
-      }
-    }
   }
 
   showSuccessModal(message: string) {
@@ -128,9 +94,7 @@ export class AddAppointmentModalComponent implements OnInit {
     });
   
     successModalRef.content.confirmed.subscribe((confirmed: boolean) => {
-      // this.loadAppointments();
       if (confirmed) {
-        // this.submitForm();
       }
     });
   }
@@ -153,9 +117,7 @@ export class AddAppointmentModalComponent implements OnInit {
       console.log('Form is valid:', this.appointmentForm.valid);
       console.log('Form  value:', this.appointmentForm.value);
 
-if (confirmed) {
-  // this.showSuccessModal;
-}
+  this.submitForm();
 
     });
   }

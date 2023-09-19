@@ -1,32 +1,3 @@
-<!-- <div class="modal-header">
-  <h5 class="modal-title">Add Appointment</h5>
-  <button type="button" class="close" (click)="cancel()">
-    <span>&times;</span>
-  </button>
-</div>
-<div class="modal-body" >
-  <form (ngSubmit)="submitForm()" #f="ngForm">
-    <div class="form-group">
-      <label for="startDateTime">Appointment Date and Time:</label>
-      <input
-      type="date"
-      class="form-control"
-      id="appointmentDate"
-      [(ngModel)]="selectedDate"
-      [min]="minDate"
-    />
-  </div>
-
-
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="showConfirmationModal()">Confirm</button>
-  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-</div> -->
 <div class="modal-header">
   <h5 class="modal-title">Add Appointment</h5>
   <button type="button" class="close" (click)="cancel()">
@@ -72,7 +43,7 @@
 
 <div class="modal-footer">
   
-  <button type="submit" class="btn btn-primary" (click)="showConfirmationModal()" (click)="submitForm()"> Confirm</button>
+  <button type="submit" class="btn btn-primary" (click)="showConfirmationModal()"  > Confirm</button>
   <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
 </div>
 </form>

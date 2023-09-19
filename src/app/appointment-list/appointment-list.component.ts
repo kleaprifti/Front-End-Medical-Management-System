@@ -7,7 +7,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { formatDate } from '@angular/common';
 import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 
 @Component({
@@ -16,7 +16,10 @@ import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
-  @ViewChild('addAppointmentModal') addAppointmentModal!: AddAppointmentModalComponent;
+  @ViewChild(AddAppointmentModalComponent, { static: false }) addAppointmentModal!: AddAppointmentModalComponent;
+  @ViewChild('modalForm')
+  modalForm!: NgForm; 
+  modalFormGroup!: FormGroup;
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
@@ -40,7 +43,7 @@ export class AppointmentListComponent implements OnInit {
   patientId: number | null = null;
   startDateTime: string | undefined = undefined;
   endDateTime: string | undefined = undefined;
-  appointmentForm: FormGroup | undefined = undefined;
+  appointmentForm!: FormGroup;
   selectedDateTime!: string;
   bsModalRef!: ModalComponent;
   errorMessage: any;
@@ -285,6 +288,7 @@ updateAddButtonState() {
     });
   
     modalRef.content.result.subscribe((result: string) => {
+      
       if (result === 'success') {
         this.loadAppointments();
       } else if (result === 'error') {

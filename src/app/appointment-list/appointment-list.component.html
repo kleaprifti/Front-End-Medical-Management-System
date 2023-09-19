@@ -4,6 +4,7 @@
         <label for="doctors">
           <i class="bi bi-person-fill"></i> Doctors:
         </label>
+
         <select
           name="doctors"
           class="form-control"
@@ -41,12 +42,14 @@
         </label>
         <app-calendar (selectedDateChange)="onDateSelection($event)"></app-calendar>
       </div>
+
       <div class="col-md-4 offset-md-9 text-right custom-add-button">
         <button class="btn btn-primary"  (click)="openAddAppointmentModal()" [disabled]="!isAddButtonEnabled"> Add </button>
       </div>
     </div>
-  </div>
+    
   <div class="row">
+    
     <div class="col-md-12">
       <div ng-container *ngIf="  (isDoctorSelected && !selectedPatientId) ||
       (isPatientSelected && !selectedDoctorId) ||
@@ -89,10 +92,12 @@
                 </tbody>
                 </table>
           </div>
+          
         </ng-container>
         <ng-template #noAppointmentsMessage>
           <p>No appointments available for the selected date.</p>
         </ng-template>
       </div>
     </div>
+
   </div> 

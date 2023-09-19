@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../appointment.service';
 import { Appointment } from '../appointment';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { catchError } from 'rxjs';
 
 @Component({
   selector: 'app-add-appointment-modal',
@@ -25,20 +26,21 @@ export class AddAppointmentModalComponent implements OnInit {
   modalRef!: BsModalRef;
   confirmed!: boolean;
   selectedDate: Date | undefined;
-  appointmentDateStartTime!: string| undefined;
-  appointmentDateEndTime!: string| undefined;
+  appointmentDateStartTime: Date = new Date(); 
+  appointmentDateEndTime: Date = new Date();
   isErrorVisible: boolean = true;
-  minDate: string = new Date().toISOString().split('T')[0]; 
+  minDate: Date = new Date();
   selectedDateTime: Date = new Date(); 
-  selectedTime: string = ''; 
-  selectedStartDate: any;
-  selectedEndDate: any
+  selectedStartDate:  Date = new Date();
+  selectedEndDate:  Date = new Date();
+  formValue: any;
 
   constructor(
     public bsModalRef: BsModalRef,
-    private formBuilder: FormBuilder,
     private modalService: BsModalService,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private formBuilder: FormBuilder
+
   ) { this.datepickerConfig = Object.assign({}, {
     containerClass: 'theme-dark-blue',
     dateInputFormat: 'YYYY-MM-DD HH:mm', 
@@ -52,68 +54,34 @@ export class AddAppointmentModalComponent implements OnInit {
     this.appointmentForm = this.formBuilder.group({
       doctorId: [this.selectedDoctorId, Validators.required],
       patientId: [this.selectedPatientId, Validators.required],
-      appointmentDateStartTime: ['', Validators.required],
-      appointmentDateEndTime: ['', Validators.required],
+      appointmentDateStartTime: [this.selectedStartDate, Validators.required],
+      appointmentDateEndTime: [this.selectedEndDate, Validators.required],
 
     });
+    
   }
   
-
+  
   submitForm() {
-    const selectedDoctorId = this.selectedDoctorId;
-    const selectedPatientId = this.selectedPatientId;
-    const startDateTime = this.appointmentForm.get('appointmentDateStartTime')?.value;
-    const endDateTime = this.appointmentForm.get('appointmentDateEndTime')?.value;
-    const currentTime = new Date();
-  
-    if (startDateTime <= currentTime) {
-      this.errorMessage = "It's not possible to add an appointment in the past";
-      this.isErrorVisible = true;
-      this.result.emit('error');
-    } else if (this.isTimeSlotAvailable(startDateTime, endDateTime)) {
-      this.errorMessage = 'The time slot is not available';
-      this.isErrorVisible = true;
-      this.result.emit('error');
-    } else {
-      if (selectedDoctorId !== null && selectedPatientId !== null) {
-        this.appointmentService.addAppointment({
-          doctorId: selectedDoctorId,
-          patientId: selectedPatientId,
-          startDate: startDateTime,
-          endDate: endDateTime
-        }).subscribe(
-          () => {
-            this.showSuccessModal('Appointment added successfully');
-            this.loadAppointments();
-          },
-          (error: { message: string }) => {
-            if (error.message === 'The time slot is not available') {
-              this.showErrorModal('The time slot is not available');
-            } else {
-              console.error('Error adding appointment:', error);
-            }
-          }
-        );
-      } else {
-        this.errorMessage = 'Please select both a doctor and a patient.';
-        this.isErrorVisible = true;
-        this.result.emit('error');
-      }
-    }
+      const formValue = this.appointmentForm.value;
+
+      this.appointmentService.addAppointment({
+        doctorId: formValue.doctorId,
+        patientId: formValue.patientId,
+        startDateTime: formValue.appointmentDateStartTime,
+        endDateTime: formValue.appointmentDateEndTime
+      }).subscribe(
+        (response) => {
+          console.log('Success ', response);
+        },
+        (error) => {
+          console.log("error");
+          console.error('Error adding appointment:', error);
+          this.errorMessage = error.error.message;
+        }
+      );
+ 
   }
-  
-  isTimeSlotAvailable(newStartTime: Date, newEndTime: Date): boolean {
-    for (const appointment of this.appointments) {
-      const existingStartTime = new Date(appointment.appointmentDateStartTime);
-      const existingEndTime = new Date(appointment.appointmentDateEndTime);
-  
-      if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
-        return true; 
-      }
-    }
-  
-    return false;
-    }
   
   loadAppointments(): void {
     console.log('Loading appointments...');
@@ -150,8 +118,7 @@ export class AddAppointmentModalComponent implements OnInit {
   }
 
   showSuccessModal(message: string) {
-    this.submitForm();
-  
+ 
     const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'success',
@@ -161,15 +128,14 @@ export class AddAppointmentModalComponent implements OnInit {
     });
   
     successModalRef.content.confirmed.subscribe((confirmed: boolean) => {
-      this.loadAppointments();
+      // this.loadAppointments();
       if (confirmed) {
-        this.submitForm();
+        // this.submitForm();
       }
     });
   }
 
   showConfirmationModal() {
-    this.loadAppointments();
     this.modalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'confirmation',
@@ -179,10 +145,18 @@ export class AddAppointmentModalComponent implements OnInit {
     });
 
     this.modalRef.content.confirmed.subscribe((confirmed: boolean) => {
-      if (confirmed) {
-            this.submitForm();
+      console.log('Selected doctor ID:', this.selectedDoctorId);
+      console.log('Selected patient ID:', this.selectedPatientId);
 
-      }
+      console.log('Selected startTime',this.selectedStartDate);
+      console.log('Selected End Date Time',this.selectedEndDate);
+      console.log('Form is valid:', this.appointmentForm.valid);
+      console.log('Form  value:', this.appointmentForm.value);
+
+if (confirmed) {
+  // this.showSuccessModal;
+}
+
     });
   }
 

@@ -34,15 +34,17 @@
   </button>
 </div>
 <div class="modal-body">
-  <form (ngSubmit)="submitForm()" #f="ngForm">
+  <form  #f="ngForm" #modalForm="ngForm" >  
     <div class="form-group">
       <label for="startDateTime">Start Date and Time:</label>
       <input
         type="datetime-local"
         class="form-control"
         id="startDateTime"
-        name="startDateTime"
+        name="appointmentDateStartTime"
         [(ngModel)]="selectedStartDate"
+        [(ngModel)]="appointmentForm.value.appointmentDateStartTime"
+        [ngModelOptions]="{ standalone: true }"
         [min]="minDate"
         required
       />
@@ -54,8 +56,10 @@
         type="datetime-local"
         class="form-control"
         id="endDateTime"
-        name="endDateTime"
+        name="appointmentDateEndTime"
         [(ngModel)]="selectedEndDate"
+        [(ngModel)]="appointmentForm.value.appointmentDateEndTime"
+        [ngModelOptions]="{ standalone: true }"
         [min]="selectedStartDate" 
         required
       />
@@ -64,9 +68,12 @@
     <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
     </div>
-  </form>
-</div>
+ 
+
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" (click)="showConfirmationModal()" (click)="submitForm()"> Confirm</button>
+  
+  <button type="submit" class="btn btn-primary" (click)="showConfirmationModal()" (click)="submitForm()"> Confirm</button>
   <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+</div>
+</form>
 </div>

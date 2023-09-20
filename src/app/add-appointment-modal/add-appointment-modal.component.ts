@@ -18,7 +18,7 @@ export class AddAppointmentModalComponent implements OnInit {
   @Input() actionType: 'confirmation' | 'success' | undefined;
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
-  // datepickerConfig: Partial<BsDatepickerConfig>;
+  
   errorMessage: string | undefined;
   appointments: Appointment[] = [];
   appointmentForm!: FormGroup;
@@ -28,7 +28,7 @@ export class AddAppointmentModalComponent implements OnInit {
   appointmentDateStartTime: Date = new Date(); 
   appointmentDateEndTime: Date = new Date();
   isErrorVisible: boolean = true;
-  minDate: Date = new Date();
+  minDate: string = new Date().toISOString().slice(0, 16);
   selectedDateTime: Date = new Date(); 
   selectedStartDate:  Date = new Date();
   selectedEndDate:  Date = new Date();
@@ -45,7 +45,6 @@ export class AddAppointmentModalComponent implements OnInit {
   ngOnInit() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     console.log('Selected patient ID:', this.selectedPatientId);
-
     this.appointmentForm = this.formBuilder.group({
       doctorId: [this.selectedDoctorId, Validators.required],
       patientId: [this.selectedPatientId, Validators.required],

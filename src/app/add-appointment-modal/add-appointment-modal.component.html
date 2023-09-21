@@ -1,0 +1,50 @@
+<div class="modal-header">
+  <h5 class="modal-title">Add Appointment</h5>
+  <button type="button" class="close" (click)="cancel()">
+    <span>&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form  #f="ngForm" #modalForm="ngForm" >  
+    <div class="form-group">
+      <label for="startDateTime">Start Date and Time:</label>
+      <input
+        type="datetime-local"
+        class="form-control"
+        id="startDateTime"
+        name="appointmentDateStartTime"
+        [(ngModel)]="selectedStartDate"
+        [(ngModel)]="appointmentForm.value.appointmentDateStartTime"
+        [ngModelOptions]="{ standalone: true }"
+        [min]="minDate"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="endDateTime">End Date and Time:</label>
+      <input
+        type="datetime-local"
+        class="form-control"
+        id="endDateTime"
+        name="appointmentDateEndTime"
+        [(ngModel)]="selectedEndDate"
+        [(ngModel)]="appointmentForm.value.appointmentDateEndTime"
+        [ngModelOptions]="{ standalone: true }"
+        [min]="selectedStartDate" 
+        required
+      />
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+ 
+
+<div class="modal-footer">
+  
+  <button type="submit" class="btn btn-primary" (click)="showConfirmationModal()"  > Confirm</button>
+  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+</div>
+</form>
+</div>

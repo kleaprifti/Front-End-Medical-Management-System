@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { User } from '../user';
 import { UserService } from '../user.service';
 import { Appointment } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
-
+import { formatDate } from '@angular/common';
+import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
+import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
+import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-appointment-list',
@@ -13,6 +16,10 @@ import { ModalComponent } from '../confirmation-modal/confirmation-modal.compone
   styleUrls: ['./appointment-list.component.css']
 })
 export class AppointmentListComponent implements OnInit {
+  @ViewChild(AddAppointmentModalComponent, { static: false }) addAppointmentModal!: AddAppointmentModalComponent;
+  @ViewChild('modalForm')
+  modalForm!: NgForm; 
+  modalFormGroup!: FormGroup;
   doctors: User[] = [];
   appointments: Appointment[] = [];
   patientAppointments: Appointment[] = [];
@@ -34,11 +41,16 @@ export class AppointmentListComponent implements OnInit {
   isAddButtonEnabled: boolean = false;
   doctorId: number | null = null;
   patientId: number | null = null;
-  startDateTime: string | null = null;
-  endDateTime: string | null = null;
+  startDateTime: string | undefined = undefined;
+  endDateTime: string | undefined = undefined;
+  appointmentForm!: FormGroup;
+  selectedDateTime!: string;
+  bsModalRef!: ModalComponent;
+  errorMessage: any;
+  startTimeToCheck!: string;
 
-  
-  constructor(private userService: UserService, private appointmentService: AppointmentService,private modalService: BsModalService) {}
+  constructor(private userService: UserService,  private formBuilder: FormBuilder,
+    private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
     this.userService.getDoctors().subscribe(users => {
@@ -49,9 +61,27 @@ export class AppointmentListComponent implements OnInit {
       this.patients = patients;
       console.log('Patients:', this.patients);
     });
+    this.formBuilder.group({
+      dateTime: ['', Validators.required], 
+    });
+
     this.loadAppointments();
+    this.appointmentService.getAllAppointments(this.doctorId,this.patientId,this.startDateTime,this.endDateTime).subscribe(
+      (data) => {
+        this.appointments = data;
+      },
+      (error) => {
+        console.error('Error fetching appointments', error);
+      }
+    );
 
   }
+  @NgModule({
+    declarations: [
+      AddAppointmentModalComponent,
+    ],
+  })
+
 
   isFutureDate(dateStr: string): boolean {
     const currentDate = new Date().getTime();
@@ -83,6 +113,10 @@ onDeleteAppointment(appointment: Appointment) {
   });
 }
 
+isDuplicateStartTime(): boolean {
+  return this.appointments.some(appointment => appointment.appointmentDateStartTime === this.startTimeToCheck);
+}
+
 showSuccessModal(message: string) {
   const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
     initialState: {
@@ -93,8 +127,10 @@ showSuccessModal(message: string) {
   });
 
   successModalRef.content.confirmed.subscribe(() => {
+    this.loadAppointments();
   });
 }
+
 
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
@@ -177,6 +213,7 @@ updateAddButtonState() {
     }
 
     
+ 
   onDateSelection(selectedDate: Date | null) {
     this.selectedDate = selectedDate;
     this.loadAppointments();
@@ -238,5 +275,25 @@ updateAddButtonState() {
     this.startTimeSortOrder = this.startTimeSortOrder === 'asc' ? 'desc' : 'asc';
     this.sortAppointmentsByStartTime();
   }
+  
 
+  openAddAppointmentModal() {
+    const initialState = {
+      selectedDoctorId: this.selectedDoctorId,
+      selectedPatientId: this.selectedPatientId,
+    };
+  
+    const modalRef: BsModalRef = this.modalService.show(AddAppointmentModalComponent, {
+      initialState,
+    });
+  
+    modalRef.content.result.subscribe((result: string) => {
+      
+      if (result === 'success') {
+        this.loadAppointments();
+      } else if (result === 'error') {
+        this.errorMessage = modalRef.content.errorMessage;
+      }
+    });
+  } 
 }

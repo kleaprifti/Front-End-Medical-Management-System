@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AppRoutingModule } from './app-routing.module';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
@@ -14,6 +15,7 @@ import { DateFormatPipe } from './date-format.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalComponent } from './confirmation-modal/confirmation-modal.component';
+import { AddAppointmentModalComponent } from './add-appointment-modal/add-appointment-modal.component';
 
 
 
@@ -28,12 +30,14 @@ import { ModalComponent } from './confirmation-modal/confirmation-modal.componen
     AppointmentListComponent,
     DateFormatPipe,
     CalendarComponent,
-    ModalComponent
+    ModalComponent,
+    AddAppointmentModalComponent
   
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    BsDatepickerModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
     ModalModule.forRoot(),

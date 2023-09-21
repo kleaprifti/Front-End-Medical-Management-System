@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Appointment } from './appointment';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
       params = params.append('endDateTime', endDateTime);
     }
 
-    const url = `${this.apiUrl}/appointments`;
+    const url = `${this.apiUrl}`;
     return this.http.get<Appointment[]>(url, { params: params });
   }
   
@@ -51,4 +52,35 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
+// addAppointment(appointmentDto: any): Observable<Appointment[]> {
+//   return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, appointmentDto).pipe(
+//     catchError((error: any) => {
+//       return throwError(error);
+//     })
+//   );
+// }
+addAppointment(appointment: {
+  doctorId: number | null,
+  patientId: number | null,
+  startDateTime: DatePipe, 
+  endDateTime: DatePipe, 
+}): Observable<Appointment[]> {
+  const startDateTime = appointment.startDateTime;
+  const endDateTime = appointment.endDateTime;
+
+  const body = {
+    doctorId: appointment.doctorId,
+    patientId: appointment.patientId,
+    appointmentDateStartTime: startDateTime,
+    appointmentDateEndTime: endDateTime,
+  };
+
+  return this.http.post<Appointment[]>(`${this.apiUrl}/add`, body).pipe(
+    catchError((error) => {
+      console.error('Error adding appointment:', error);
+      throw error;
+    })
+  );
 }
+
+  }

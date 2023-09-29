@@ -13,6 +13,8 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 })
 export class AddAppointmentModalComponent implements OnInit {
   @Output() result: EventEmitter<string> = new EventEmitter<string>();
+  @Output() appointmentAdded: EventEmitter<Appointment> = new EventEmitter<Appointment>();
+
   @Input() selectedDoctorId: number | null = null;
   @Input() selectedPatientId: number | null = null;
   @Input() actionType: 'confirmation' | 'success' | undefined;
@@ -64,10 +66,13 @@ export class AddAppointmentModalComponent implements OnInit {
         startDateTime: formValue.appointmentDateStartTime,
         endDateTime: formValue.appointmentDateEndTime
       }).subscribe(
-        (response) => {
+        (response: Appointment) => {
           console.log('Success ', response);
           this.errorMessage = undefined;
           this.showSuccessModal('Appointment added successfully.');
+          this.bsModalRef.hide(); // Close the modal
+          this.appointmentAdded.emit(response);
+
 
         },
         (error) => {
@@ -78,9 +83,10 @@ export class AddAppointmentModalComponent implements OnInit {
       );
  
   }
+  
 
   showSuccessModal(message: string) {
- 
+
     const successModalRef: BsModalRef = this.modalService.show(ModalComponent, {
       initialState: {
         actionType: 'success',
@@ -89,7 +95,9 @@ export class AddAppointmentModalComponent implements OnInit {
       },
     });
   
-    successModalRef.content.confirmed.subscribe((confirmed: boolean) => {
+    successModalRef.content.confirmed.subscribe((confirmed: boolean) => {       
+
+
       if (confirmed) {
 
       }

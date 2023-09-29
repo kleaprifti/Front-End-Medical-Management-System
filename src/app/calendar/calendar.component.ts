@@ -1,5 +1,6 @@
 import { Component  ,EventEmitter, Output,Input} from '@angular/core';
 import { DateFormatPipe } from '../date-format.pipe'; // Import the custom pipe
+import { Appointment } from '../appointment';
 
 @Component({
   selector: 'app-calendar',
@@ -7,9 +8,12 @@ import { DateFormatPipe } from '../date-format.pipe'; // Import the custom pipe
   styleUrls: ['./calendar.component.css']
 })
 export class CalendarComponent {
+  @Input() selectedDate: Date | null = new Date();
 
   @Output() selectedDateChange = new EventEmitter<Date | null>();
-  selectedDate: Date | null = new Date();
+  @Input() appointments: Appointment[] = [];
+  
+
 
   onDateChange(event: Event): void {
     const target = event.target as HTMLInputElement;

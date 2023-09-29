@@ -52,19 +52,13 @@ getAllAppointments(doctorId: number | null, patientId: number | null,startDateTi
     return this.http.delete<void>(url);
 }
 
-// addAppointment(appointmentDto: any): Observable<Appointment[]> {
-//   return this.http.post<Appointment[]>(`${this.apiUrl}/addAppointment`, appointmentDto).pipe(
-//     catchError((error: any) => {
-//       return throwError(error);
-//     })
-//   );
-// }
+
 addAppointment(appointment: {
   doctorId: number | null,
   patientId: number | null,
   startDateTime: DatePipe, 
   endDateTime: DatePipe, 
-}): Observable<Appointment[]> {
+}): Observable<Appointment> {
   const startDateTime = appointment.startDateTime;
   const endDateTime = appointment.endDateTime;
 
@@ -75,7 +69,7 @@ addAppointment(appointment: {
     appointmentDateEndTime: endDateTime,
   };
 
-  return this.http.post<Appointment[]>(`${this.apiUrl}/add`, body).pipe(
+  return this.http.post<Appointment>(`${this.apiUrl}/add`, body).pipe(
     catchError((error) => {
       console.error('Error adding appointment:', error);
       throw error;

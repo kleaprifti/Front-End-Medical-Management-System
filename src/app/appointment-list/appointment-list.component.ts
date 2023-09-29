@@ -48,6 +48,10 @@ export class AppointmentListComponent implements OnInit {
   bsModalRef!: ModalComponent;
   errorMessage: any;
   startTimeToCheck!: string;
+  latestAddedAppointmentDateTime: Date | null = null;
+
+
+
 
   constructor(private userService: UserService,  private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,private modalService: BsModalService) {}
@@ -132,6 +136,7 @@ showSuccessModal(message: string) {
 }
 
 
+
   onDoctorSelection() {
     console.log('Selected doctor ID:', this.selectedDoctorId);
     this.isDoctorSelected = !!this.selectedDoctorId;
@@ -165,15 +170,18 @@ updateAddButtonState() {
         const end = new Date(this.selectedDate);
         end.setHours(23, 59, 59, 999);
         endDateTime = end.toISOString();
-      }  if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
+      } 
+       if (this.selectedDoctorId !== null || this.selectedPatientId !== null) {
       this.appointmentService.getAppointments(this.selectedDoctorId, this.selectedPatientId).subscribe(
           appointments => {
-            this.appointments 
-            = appointments.filter(a => {
-                        const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
-                        return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
-                               (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
-                      });          
+            this.appointments = appointments.filter(a => {
+              const appointmentTime = new Date(a.appointmentDateStartTime).getTime();
+              return (!startDateTime || appointmentTime >= new Date(startDateTime).getTime()) &&
+                   (!endDateTime || appointmentTime <= new Date(endDateTime).getTime());
+              const appointmentDate = new Date(a.appointmentDateStartTime);
+              return appointmentDate.toDateString() === this.selectedDate?.toDateString()
+              
+            });      
                     }, (error) => {
             console.error('Error fetching appointments:', error);
           }
@@ -184,6 +192,10 @@ updateAddButtonState() {
   }
 
 }
+
+
+
+
 
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {
@@ -276,6 +288,7 @@ updateAddButtonState() {
     this.sortAppointmentsByStartTime();
   }
   
+ 
 
   openAddAppointmentModal() {
     const initialState = {
@@ -295,5 +308,19 @@ updateAddButtonState() {
         this.errorMessage = modalRef.content.errorMessage;
       }
     });
-  } 
+    modalRef.content.appointmentAdded.subscribe((response: Appointment) => {
+      this.onAppointmentAdded(response);
+      this.loadAppointments();
+
+    });
+   
+  }
+  
+  onAppointmentAdded(response: Appointment) {
+    this.appointments.push(response);
+
+    this.selectedDate = new Date(response.appointmentDateStartTime);
+    this.sortAppointmentsByStartTime();
+  
+  }
 }

@@ -11,6 +11,8 @@ export class ModalComponent {
   @Input() modalTitle: string | undefined;
   @Input() modalMessage: string | undefined;
 
+  currentAppointment: { appointmentDateStartTime: string } | undefined;
+
   constructor(public bsModalRef: BsModalRef) {}
 
 

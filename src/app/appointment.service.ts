@@ -3,12 +3,13 @@ import { HttpClient,HttpParams } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Appointment } from './appointment';
 import { DatePipe } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:8080/appointments';
+  private apiUrl = `${environment.apiUrl}/appointments`;
   constructor(private http: HttpClient) { }
   getAppointments(doctorId: number | null, patientId: number | null, selectedDate?: Date): Observable<Appointment[]> {
     let params = new HttpParams();

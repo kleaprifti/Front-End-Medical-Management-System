@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { environment } from '@environments/environment.development';
+import { environment } from '@environments/dev-environment/environment.development';'@environments/prod-environment/environment.prod';
 
 @Component({
   selector: 'app-root',

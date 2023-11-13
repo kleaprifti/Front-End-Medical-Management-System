@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalComponent } from './confirmation-modal/confirmation-modal.component';
 import { AddAppointmentModalComponent } from './add-appointment-modal/add-appointment-modal.component';
+import { ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
 
 
 
@@ -31,7 +32,7 @@ import { AddAppointmentModalComponent } from './add-appointment-modal/add-appoin
     DateFormatPipe,
     CalendarComponent,
     ModalComponent,
-    AddAppointmentModalComponent
+    AddAppointmentModalComponent,
   
   ],
   imports: [
@@ -41,6 +42,7 @@ import { AddAppointmentModalComponent } from './add-appointment-modal/add-appoin
     HttpClientModule,
     AppRoutingModule,
     ModalModule.forRoot(),
+    ReactiveFormsModule,
 
     BrowserAnimationsModule
   ],

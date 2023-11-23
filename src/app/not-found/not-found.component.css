@@ -1,0 +1,12 @@
+.center-container {
+    text-align: center;
+    color: red;
+    margin-top: 20vh; 
+  }
+  
+  img {
+    max-width: 30%;
+    height: auto;
+    margin-top: 20px; 
+  }
+  

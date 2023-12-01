@@ -5,11 +5,11 @@
 }
 
 h1 {
-  color: #007bff; /* Set the desired color */
+  color: #007bff;
 }
 
 form {
-  max-width: 300px; /* Set the desired width for the form */
+  max-width: 300px; 
   margin: 0 auto;
 }
 

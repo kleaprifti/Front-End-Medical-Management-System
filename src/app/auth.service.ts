@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { LoginInfoDto } from './login-info.dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+
   private apiUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}

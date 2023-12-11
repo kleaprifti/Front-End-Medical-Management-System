@@ -13,7 +13,6 @@ const routes: Routes = [
   { path: 'appointment-list', component: AppointmentListComponent ,canActivate: [AuthGuard] },
   { path: '**', component: NotFoundComponent },
   { path: 'appointment-list', redirectTo: '', pathMatch: 'full' },
-
   
 
 ];

@@ -26,6 +26,12 @@ export class WelcomeComponent {
       password: ['', Validators.required],
     });
   }
+  private checkSessionTimeout(): void {
+    setTimeout(() => {
+      this.loginService.logout();
+      this.router.navigateByUrl(''); 
+    }, this.loginService.getSession() ? this.loginService.getSession().timeout : 0);
+  }
   login(): void {
     if (this.loginForm.valid) {
       const enteredUsername = this.loginForm.value.username;

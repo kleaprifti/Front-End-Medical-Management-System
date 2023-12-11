@@ -16,7 +16,7 @@ export class AuthGuard {
     if (this.loginService.isLoggedIn()) {
       return true;
     } else {
-      return this.router.createUrlTree(['']);
+      return this.router.navigate(['/']);
     }
   }
 }

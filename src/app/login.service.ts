@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '@environments/dev-environment/environment.development';
 
 @Injectable({
@@ -8,20 +8,37 @@ import { environment } from '@environments/dev-environment/environment.developme
 })
 export class LoginService {
   private baseUrl = environment.apiUrl;
-  private sessionKey =  'session';
+  private sessionKey = 'session';
+  private sessionTimeout = 30 * 1000; 
+
   constructor(private http: HttpClient) { }
+
   authenticateUser(username: string, password: string): Observable<any> {
     const body = { username, password };
     const headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
-        });
-    return this.http.post(`${this.baseUrl}/login`, body,{ headers });
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
+    });
+
+    return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
+      tap(() => {
+        this.setLoggedIn();
+      })
+    );
   }
-  private loggedIn = true; 
+
+  private loggedIn = false;
 
   isLoggedIn(): boolean {
     return this.loggedIn;
+
+  }
+
+  setLoggedIn(): void {
+    this.loggedIn = true;
+    setTimeout(() => {
+      this.logout();
+    }, this.sessionTimeout);
   }
 
   logout(): void {
@@ -33,5 +50,4 @@ export class LoginService {
     const sessionString = sessionStorage.getItem(this.sessionKey);
     return sessionString ? JSON.parse(sessionString) : null;
   }
-
 }

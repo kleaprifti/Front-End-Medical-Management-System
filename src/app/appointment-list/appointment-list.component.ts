@@ -5,6 +5,7 @@ import { Appointment } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalComponent } from '../confirmation-modal/confirmation-modal.component';
+import { LogoutComponent } from '@app/logout/logout.component';
 import { formatDate } from '@angular/common';
 import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
@@ -49,6 +50,9 @@ export class AppointmentListComponent implements OnInit {
   errorMessage: any;
   startTimeToCheck!: string;
   latestAddedAppointmentDateTime: Date | null = null;
+  logoutComponent!: LogoutComponent;
+  router: any;
+  loginService: any;
 
 
 
@@ -194,8 +198,10 @@ updateAddButtonState() {
 }
 
 
-
-
+logout() {
+  this.loginService.logout();
+  this.router.navigate(['/logout']); 
+}
 
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {
@@ -323,4 +329,5 @@ updateAddButtonState() {
     this.sortAppointmentsByStartTime();
   
   }
+
 }

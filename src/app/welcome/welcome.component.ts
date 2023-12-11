@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-welcome',
@@ -11,8 +10,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class WelcomeComponent {
   loginForm!: FormGroup;
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  username: string = 'romeisaaliu1@gmail.com';
+  password: string = 'password';
+  constructor(
+    private fb: FormBuilder,
+    private loginService: LoginService,
+    private router: Router
+  ) {
     this.createLoginForm();
   }
 
@@ -22,31 +26,26 @@ export class WelcomeComponent {
       password: ['', Validators.required],
     });
   }
-
   login(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.valid) {
+      const enteredUsername = this.loginForm.value.username;
+      const enteredPassword = this.loginForm.value.password;
 
-    const enteredUsername = this.loginForm.get('username')?.value || '';
-    const enteredPassword = this.loginForm.get('password')?.value || '';
-
-    this.authService.login(enteredUsername, enteredPassword).subscribe(
-      this.handleLoginSuccess.bind(this),
-      this.handleLoginError.bind(this)
-    );
-  }
-
-  private handleLoginSuccess(response: any): void {
-    console.log('Login successful', response);
-    this.router.navigate(['localhost:8080/appointments']);
-  }
-
-  private handleLoginError(error: any): void {
-    if (error instanceof HttpErrorResponse && error.status === 401) {
-      console.error('Login failed: Unauthorized', error);
+      this.loginService.authenticateUser(enteredUsername, enteredPassword).subscribe(
+        (authenticated: boolean) => {
+          if (authenticated) {
+            console.log('Login successful');
+            this.router.navigate(['/appointment-list']);
+          } else {
+            console.error('Invalid username or password');
+          }
+        },
+        (error) => {
+          console.error('Login failed', error);
+        }
+      );
     } else {
-      console.error('Login failed', error);
+      console.error('Invalid form database');
     }
   }
 }

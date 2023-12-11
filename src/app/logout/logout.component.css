@@ -1,0 +1,17 @@
+/* Style for the outer div */
+div {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  span {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; 
+    margin-right: 10px; 
+  }
+  
+  button {
+    padding: 8px 16px;
+    color: white;
+  }

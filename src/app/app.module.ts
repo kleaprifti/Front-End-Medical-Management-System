@@ -18,7 +18,8 @@ import { ModalComponent } from './confirmation-modal/confirmation-modal.componen
 import { AddAppointmentModalComponent } from './add-appointment-modal/add-appointment-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { LoginComponent } from './login/login.component'; 
+import { LogoutComponent } from './logout/logout.component';
+import { AuthGuard } from './auth.guard';
 
 
 
@@ -36,7 +37,7 @@ import { LoginComponent } from './login/login.component';
     ModalComponent,
     AddAppointmentModalComponent,
     NotFoundComponent,
-    LoginComponent,
+    LogoutComponent,
   
   ],
   imports: [
@@ -50,7 +51,7 @@ import { LoginComponent } from './login/login.component';
 
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [[AuthGuard]],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

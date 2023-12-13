@@ -93,7 +93,7 @@ export class WelcomeComponent implements OnInit {
     if (session) {
       setTimeout(() => {
         this.loginService.logout();
-        this.router.navigateByUrl('');
+        this.router.navigateByUrl('/');
       }, session.timeout);
     }
   }

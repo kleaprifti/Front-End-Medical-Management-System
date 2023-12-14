@@ -49,6 +49,8 @@ export class AppointmentListComponent implements OnInit {
   errorMessage: any;
   startTimeToCheck!: string;
   latestAddedAppointmentDateTime: Date | null = null;
+  router: any;
+  loginService: any;
 
 
 
@@ -194,8 +196,10 @@ updateAddButtonState() {
 }
 
 
-
-
+logout() {
+  this.loginService.logout();
+  this.router.navigate(['/logout']); 
+}
 
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {
@@ -323,4 +327,5 @@ updateAddButtonState() {
     this.sortAppointmentsByStartTime();
   
   }
+
 }

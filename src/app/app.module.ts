@@ -17,7 +17,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { ModalComponent } from './confirmation-modal/confirmation-modal.component';
 import { AddAppointmentModalComponent } from './add-appointment-modal/add-appointment-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NotFoundComponent } from './not-found/not-found.component'; 
+import { NotFoundComponent } from './not-found/not-found.component';
+import { AuthGuard } from './auth.guard';
 
 
 
@@ -48,7 +49,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [[AuthGuard]],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -58,6 +58,7 @@ export class WelcomeComponent implements OnInit {
       );
     } else {
       console.error('Invalid form database');
+      this.credentialError = 'Empty or invalid credentials';
     }
   }
 }

@@ -8,29 +8,33 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class LoginService {
-  private baseUrl = environment.apiUrl;
-  private sessionKey = 'session';
-  private sessionTimeout = 30 * 1000;
+  private readonly baseUrl = environment.apiUrl;
+  private readonly sessionKey = 'session';
+  private readonly rememberMeKey = 'rememberMe';
+  private readonly credentialsKey = 'credentials';
+  private readonly sessionTimeout = 30 * 1000;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  private loggedIn = false;
+  private sessionTimeoutId: any;
 
-  authenticateUser(username: string, password: string): Observable<any> {
+  constructor(private http: HttpClient, private router: Router) {}
+
+  authenticateUser(username: string, password: string, rememberMe: boolean): Observable<any> {
     const body = { username, password };
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
-    });
+    const headers = this.createHeaders(body);
 
     return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
       tap(() => {
         this.setLoggedIn();
         this.saveSession({ username });
+        if (rememberMe) {
+          this.saveCredentials({ username, password });
+        } else {
+          this.clearCredentials();
+        }
       })
     );
   }
-
-  private loggedIn = false;
-  private sessionTimeoutId: any;
 
   isLoggedIn(): boolean {
     return this.loggedIn;
@@ -54,6 +58,21 @@ export class LoginService {
     return this.loggedIn ? this.retrieveSession() : null;
   }
 
+  saveCredentials(credentials: { username: string, password: string }): void {
+    localStorage.setItem(this.rememberMeKey, 'true');
+    localStorage.setItem(this.credentialsKey, JSON.stringify(credentials));
+  }
+
+  retrieveCredentials(): { username: string, password: string } | null {
+    const rememberMe = localStorage.getItem(this.rememberMeKey) === 'true';
+    return rememberMe ? JSON.parse(localStorage.getItem(this.credentialsKey) || '{}') : null;
+  }
+
+  clearCredentials(): void {
+    localStorage.removeItem(this.rememberMeKey);
+    localStorage.removeItem(this.credentialsKey);
+  }
+
   private saveSession(sessionData: any): void {
     sessionStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
   }
@@ -61,5 +80,12 @@ export class LoginService {
   private retrieveSession(): any {
     const sessionString = sessionStorage.getItem(this.sessionKey);
     return sessionString ? JSON.parse(sessionString) : null;
+  }
+
+  private createHeaders(body: any): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${btoa(`${body.username}:${body.password}`)}`
+    });
   }
 }

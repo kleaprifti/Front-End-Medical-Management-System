@@ -12,6 +12,9 @@
       <label for="password">Password</label>
       <input type="password" id="password" formControlName="password" class="form-control" required>
       <div class="text-danger" *ngIf="credentialError">{{ credentialError }}</div>
+      <label>
+        <input type="checkbox" id="rememberMe" name="rememberMe"> Remember Me
+    </label>
     </div>
     <button type="submit" class="btn btn-primary mt-4 ">Login</button>
   </form>

@@ -10,9 +10,7 @@ import { LoginService } from '../login.service';
 })
 export class WelcomeComponent implements OnInit {
   loginForm!: FormGroup;
-  username: string = 'romeisaaliu1@gmail.com';
-  password: string = 'password';
-  credentialError!: String;
+  credentialError!: string;
 
   constructor(
     private fb: FormBuilder,
@@ -23,12 +21,14 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     this.createLoginForm();
     this.checkSessionTimeout();
+    this.populateLoginFormIfRemembered();
   }
 
   private createLoginForm(): void {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.pattern(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)]],
       password: ['', Validators.required],
+      rememberMe: [false]
     });
   }
 
@@ -42,11 +42,22 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
+  private populateLoginFormIfRemembered(): void {
+    const savedCredentials = this.loginService.retrieveCredentials();
+    if (savedCredentials) {
+      this.loginForm.patchValue({
+        username: savedCredentials.username,
+        password: savedCredentials.password,
+        rememberMe: true
+      });
+    }
+  }
+
   login(): void {
     if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+      const { username, password, rememberMe } = this.loginForm.value;
 
-      this.loginService.authenticateUser(username, password).subscribe(
+      this.loginService.authenticateUser(username, password, rememberMe).subscribe(
         () => {
           console.log('Login successful');
           this.router.navigate(['/appointment-list']);

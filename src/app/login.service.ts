@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '@environments/dev-environment/environment.development';
 import { Router } from '@angular/router';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
@@ -18,23 +19,50 @@ export class LoginService {
   private sessionTimeoutId: any;
 
   constructor(private http: HttpClient, private router: Router) {}
-
   authenticateUser(username: string, password: string, rememberMe: boolean): Observable<any> {
-    const body = { username, password };
-    const headers = this.createHeaders(body);
-
-    return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
-      tap(() => {
+    const encryptedPassword = this.encryptPassword(password);
+    const body = { username, password: encryptedPassword };
+  
+    if (rememberMe) {
+      this.saveCredentials({ username, password: encryptedPassword });
+    }
+  
+    return this.http.post<any>(`${this.baseUrl}/login`, body, { headers: this.createHeaders(body) }).pipe(
+      tap((response) => {
+        console.log('Login successful!');
         this.setLoggedIn();
-        this.saveSession({ username });
-        if (rememberMe) {
-          this.saveCredentials({ username, password });
-        } else {
-          this.clearCredentials();
-        }
+        this.router.navigate(['/appointment-list']);
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        return throwError(error);
       })
     );
   }
+  
+  private encryptPassword(password: string): string {
+    const encrypted = CryptoJS.AES.encrypt(password, 'secretKey').toString();
+    return encrypted;
+  }
+
+
+  
+  // authenticateUser(username: string, password: string, rememberMe: boolean): Observable<any> {
+  //   const body = { username, password };
+  //   const headers = this.createHeaders(body);
+
+  //   return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
+  //     tap(() => {
+  //       this.setLoggedIn();
+  //       this.saveSession({ username });
+  //       if (rememberMe) {
+  //         this.saveCredentials({ username, password });
+  //       } else {
+  //         this.clearCredentials();
+  //       }
+  //     })
+  //   );
+  // }
 
   isLoggedIn(): boolean {
     return this.loggedIn;

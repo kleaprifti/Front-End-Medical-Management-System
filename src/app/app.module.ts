@@ -19,6 +19,7 @@ import { AddAppointmentModalComponent } from './add-appointment-modal/add-appoin
 import { ReactiveFormsModule } from '@angular/forms';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthGuard } from './auth.guard';
+import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 
 
 
@@ -36,6 +37,7 @@ import { AuthGuard } from './auth.guard';
     ModalComponent,
     AddAppointmentModalComponent,
     NotFoundComponent,
+    SessionTimeoutComponent,
   
   ],
   imports: [

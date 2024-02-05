@@ -62,4 +62,5 @@ export class LoginService {
     const sessionString = sessionStorage.getItem(this.sessionKey);
     return sessionString ? JSON.parse(sessionString) : null;
   }
+  
 }

@@ -20,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthGuard } from './auth.guard';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
+import { UserActivityDirective } from './user-activity.directive';
 
 
 
@@ -38,6 +39,7 @@ import { SessionTimeoutComponent } from './session-timeout/session-timeout.compo
     AddAppointmentModalComponent,
     NotFoundComponent,
     SessionTimeoutComponent,
+    UserActivityDirective,
   
   ],
   imports: [

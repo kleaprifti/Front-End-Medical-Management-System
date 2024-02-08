@@ -1,4 +1,4 @@
 .modal {
-    display: block;
-    opacity: 1;
+    display: block !important;
+    opacity: 1 !important;
   }

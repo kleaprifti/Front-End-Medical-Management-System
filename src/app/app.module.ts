@@ -21,6 +21,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthGuard } from './auth.guard';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { UserActivityDirective } from './user-activity.directive';
+import { SessionTimeoutService } from './session-timeout.service';
 
 
 
@@ -53,7 +54,7 @@ import { UserActivityDirective } from './user-activity.directive';
 
     BrowserAnimationsModule
   ],
-  providers: [[AuthGuard]],
+  providers: [[AuthGuard],SessionTimeoutService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

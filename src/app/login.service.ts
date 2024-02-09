@@ -18,9 +18,6 @@ export class LoginService {
   authenticateUser(username: string, password: string): Observable<any> {
     const body = { username, password };
     this.loggedIn = true;
-    setTimeout(() => {
-      this.logout();
-    }, 30000);
     this.sessionService.setSessionCheckActive(false);
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

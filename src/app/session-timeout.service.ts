@@ -19,7 +19,7 @@ export class SessionTimeoutService {
   private authService: LoginService | undefined;
   private sessionCheckActive = true; 
 
-  constructor(private modalService: BsModalService,private zone: NgZone,private LoginService:LoginService,private router: Router,private injector: Injector,private SessionConfigService: SessionConfigService
+  constructor(private modalService: BsModalService,private zone: NgZone,private router: Router,private injector: Injector,private SessionConfigService: SessionConfigService
  ) {    this.sessionTimeout = this.SessionConfigService.getSessionTimeout();
 
  }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../login.service';
+import { SessionTimeoutService } from '../session-timeout.service';
 
 @Component({
   selector: 'app-welcome',
@@ -17,12 +18,12 @@ export class WelcomeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private loginService: LoginService,
-    private router: Router
+    private router: Router,
+    private sessionTimeoutService:SessionTimeoutService
   ) {}
 
   ngOnInit(): void {
     this.createLoginForm();
-    this.checkSessionTimeout();
   }
 
   private createLoginForm(): void {
@@ -30,16 +31,6 @@ export class WelcomeComponent implements OnInit {
       username: ['', [Validators.required, Validators.pattern(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)]],
       password: ['', Validators.required],
     });
-  }
-
-  private checkSessionTimeout(): void {
-    const session = this.loginService.getSession();
-    if (session) {
-      setTimeout(() => {
-        this.loginService.logout();
-        this.router.navigateByUrl('/');
-      }, session.timeout);
-    }
   }
 
   login(): void {

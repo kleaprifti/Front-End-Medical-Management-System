@@ -2,20 +2,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '@environments/dev-environment/environment.development';
+import { SessionTimeoutService } from './session-timeout.service';
 import { Router } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
   private baseUrl = environment.apiUrl;
-  private sessionKey = 'session';
-  private sessionTimeout = 30 * 1000;
+  private loggedIn = false;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }
 
   authenticateUser(username: string, password: string): Observable<any> {
     const body = { username, password };
+    this.loggedIn = true;
+    this.sessionService.setSessionCheckActive(false);
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
@@ -23,43 +26,32 @@ export class LoginService {
 
     return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
       tap(() => {
-        this.setLoggedIn();
-        this.saveSession({ username });
+        this.sessionService.setSessionCheckActive(true); // Enable session check after successful login
+        this.sessionService.setUsername(username);
+        this.sessionService.startSessionCheck();
       })
     );
   }
 
-  private loggedIn = false;
-  private sessionTimeoutId: any;
 
-  isLoggedIn(): boolean {
+  isLoggedIn(){
     return this.loggedIn;
   }
-
-  setLoggedIn(): void {
-    this.loggedIn = true;
-    this.sessionTimeoutId = setTimeout(() => {
-      this.logout();
-      this.router.navigate(['/']);
-    }, this.sessionTimeout);
+  setLoggedIn(status:boolean): void {
+    this.loggedIn = status;
   }
 
   logout(): void {
     this.loggedIn = false;
-    clearTimeout(this.sessionTimeoutId);
-    sessionStorage.removeItem(this.sessionKey);
+    this.sessionService.clearUsername();
+    this.router.navigate(['/']);
   }
 
-  getSession(): any {
-    return this.loggedIn ? this.retrieveSession() : null;
+
+  startSessionCheck(): void {
+    if (this.loggedIn) {
+      this.sessionService.startSessionCheck();
+    }
   }
 
-  private saveSession(sessionData: any): void {
-    sessionStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-  }
-
-  private retrieveSession(): any {
-    const sessionString = sessionStorage.getItem(this.sessionKey);
-    return sessionString ? JSON.parse(sessionString) : null;
-  }
 }

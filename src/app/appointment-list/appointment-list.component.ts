@@ -9,6 +9,7 @@ import { formatDate } from '@angular/common';
 import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appointment-modal.component';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
+import { SessionTimeoutService } from '../session-timeout.service';
 
 @Component({
   selector: 'app-appointment-list',

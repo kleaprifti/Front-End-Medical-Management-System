@@ -19,7 +19,7 @@ export class SessionTimeoutService {
   private authService: LoginService | undefined;
   private sessionCheckActive = true; 
 
-  constructor(private modalService: BsModalService,private zone: NgZone,private router: Router,private injector: Injector,private SessionConfigService: SessionConfigService
+  constructor(private modalService: BsModalService,private zone: NgZone,private LoginService:LoginService,private router: Router,private injector: Injector,private SessionConfigService: SessionConfigService
  ) {    this.sessionTimeout = this.SessionConfigService.getSessionTimeout();
 
  }
@@ -27,7 +27,7 @@ export class SessionTimeoutService {
       return environment.sessionTimeout as number;
     }
 
- private getAuthService(): LoginService {
+ private getLoginService(): LoginService {
   return this.injector.get(LoginService);
 }
 
@@ -40,7 +40,7 @@ export class SessionTimeoutService {
       clearTimeout(this.timer);
   
       this.timer = setTimeout(() => {
-        const isAuthenticated =this.getAuthService().isLoggedIn();
+        const isAuthenticated =this.getLoginService().isLoggedIn();
         if (this.sessionCheckActive && isAuthenticated && !this.isUserActive()) {
           console.log('Session timeout reached. Showing modal.');
           this.showTimeoutModal();
@@ -69,7 +69,7 @@ export class SessionTimeoutService {
     
         this.modalRef.content.onLogout$.subscribe(() => {
           console.log('Logout button clicked. Redirecting to login page.');
-          this.getAuthService().setLoggedIn();
+          this.getLoginService().setLoggedIn(false);
           this.router.navigate(['/']);
           this.modalRef.hide();
         });
@@ -78,7 +78,7 @@ export class SessionTimeoutService {
       setTimeout(() => {
         if (!userActionTaken) {
           console.log('No action taken. Redirecting to login page.');
-          this.getAuthService().setLoggedIn();
+          this.getLoginService().setLoggedIn(false);
           this.router.navigate(['/']);
           this.modalRef.hide(); 
         }

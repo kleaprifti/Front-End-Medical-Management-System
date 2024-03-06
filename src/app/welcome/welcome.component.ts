@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../login.service';
 import { SessionTimeoutService } from '../session-timeout.service';
 
+
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -40,14 +41,15 @@ export class WelcomeComponent implements OnInit {
       const { username, password, rememberMe } = this.loginForm.value;
 
       this.loginService.authenticateUser(username, password).subscribe(
-           (response: any) => {
-            const { token } = response;
-            if (rememberMe) {
-              localStorage.setItem('username', username);
-              localStorage.setItem('token', token);
-            } else {
-              sessionStorage.setItem('token', token);
-            }
+        (response: any) => {
+          const { token } = response;
+          if (rememberMe) {
+            const encryptedToken = this.encryptToken(token);
+            localStorage.setItem('username', username);
+            localStorage.setItem('token', encryptedToken);
+          } else {
+            sessionStorage.setItem('token', token);
+          }
           console.log('Login successful');
           this.router.navigate(['/appointment-list']);
         },
@@ -60,5 +62,10 @@ export class WelcomeComponent implements OnInit {
       console.error('Invalid form database');
       this.credentialError = 'Empty or invalid credentials';
     }
+  }
+
+  private encryptToken(token: string): string {
+
+    return token; 
   }
 }

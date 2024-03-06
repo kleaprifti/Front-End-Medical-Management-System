@@ -13,6 +13,7 @@ export class LoginService {
   private baseUrl = environment.apiUrl;
   private loggedIn = false;
   private tokenKey= "auth_token";
+  private rememberMe= false;
 
   constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }
 
@@ -33,7 +34,7 @@ export class LoginService {
         this.sessionService.setUsername(username);
         this.sessionService.startSessionCheck();
           if (response && response.token) {
-            if (rememberMe) {
+            if (this.rememberMe) {
               localStorage.setItem('Name', response.firstName);
               localStorage.setItem('token', response.token);
               localStorage.setItem(this.tokenKey, response.token);

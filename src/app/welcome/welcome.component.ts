@@ -30,14 +30,15 @@ export class WelcomeComponent implements OnInit {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.pattern(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)]],
       password: ['', Validators.required],
+      rememberMe: [false]
     });
   }
 
   login(): void {
     if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+      const { username, password, rememberMe } = this.loginForm.value;
 
-      this.loginService.authenticateUser(username, password).subscribe(
+      this.loginService.authenticateUser(username, password,rememberMe).subscribe(
         () => {
           console.log('Login successful');
           this.router.navigate(['/appointment-list']);

@@ -12,10 +12,11 @@ import { Router } from '@angular/router';
 export class LoginService {
   private baseUrl = environment.apiUrl;
   private loggedIn = false;
+  private tokenKey= "auth_token";
 
   constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }
 
-  authenticateUser(username: string, password: string): Observable<any> {
+  authenticateUser(username: string, password: string,  rememberMe: boolean): Observable<any> {
     const body = { username, password };
     this.loggedIn = true;
     this.sessionService.setSessionCheckActive(false);
@@ -24,15 +25,29 @@ export class LoginService {
       'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
     });
 
-    return this.http.post(`${this.baseUrl}/login`, body, { headers }).pipe(
-      tap(() => {
-        this.sessionService.setSessionCheckActive(true); // Enable session check after successful login
+    return this.http.post(`${this.baseUrl}/login`, body, { headers })
+      .pipe(
+
+        tap((response: any) => {
+        this.sessionService.setSessionCheckActive(true);
         this.sessionService.setUsername(username);
         this.sessionService.startSessionCheck();
-      })
-    );
+          if (response && response.token) {
+            if (rememberMe) {
+              localStorage.setItem(this.tokenKey, response.token);
+            }
+          }
+        })
+      );
   }
 
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  clearToken(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
 
   isLoggedIn(){
     return this.loggedIn;

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class LoginService {
   private baseUrl = environment.apiUrl;
   private loggedIn = false;
-  private tokenKey= "auth_token";
+  private tokenKey= "secret";
   private rememberMe= false;
 
   constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }

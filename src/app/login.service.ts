@@ -16,7 +16,7 @@ export class LoginService {
 
   constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }
 
-  authenticateUser(username: string, password: string,  rememberMe: boolean): Observable<any> {
+  authenticateUser(username: string, password: string): Observable<any> {
     const body = { username, password };
     this.loggedIn = true;
     this.sessionService.setSessionCheckActive(false);
@@ -34,6 +34,8 @@ export class LoginService {
         this.sessionService.startSessionCheck();
           if (response && response.token) {
             if (rememberMe) {
+              localStorage.setItem('Name', response.firstName);
+              localStorage.setItem('token', response.token);
               localStorage.setItem(this.tokenKey, response.token);
             }
           }

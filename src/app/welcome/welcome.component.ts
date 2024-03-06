@@ -14,6 +14,7 @@ export class WelcomeComponent implements OnInit {
   username: string = 'romeisaaliu1@gmail.com';
   password: string = 'password';
   credentialError!: String;
+  rememberMe: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,8 +39,15 @@ export class WelcomeComponent implements OnInit {
     if (this.loginForm.valid) {
       const { username, password, rememberMe } = this.loginForm.value;
 
-      this.loginService.authenticateUser(username, password,rememberMe).subscribe(
-        () => {
+      this.loginService.authenticateUser(username, password).subscribe(
+           (response: any) => {
+            const { token } = response;
+            if (rememberMe) {
+              localStorage.setItem('username', username);
+              localStorage.setItem('token', token);
+            } else {
+              sessionStorage.setItem('token', token);
+            }
           console.log('Login successful');
           this.router.navigate(['/appointment-list']);
         },

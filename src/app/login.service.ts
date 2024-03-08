@@ -28,6 +28,8 @@ export class LoginService {
     const body = { username, password };
     this.loggedIn = true;
     this.sessionService.setSessionCheckActive(false);
+    const storedToken = localStorage.getItem('token');
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Basic ' + btoa(`${body.username}:${body.password}`)
@@ -48,7 +50,9 @@ export class LoginService {
   }
 
 
-
+  getToken(): string | null {
+    return localStorage.getItem('token');
+}
 
   clearToken(): void {
     localStorage.removeItem(this.tokenKey);

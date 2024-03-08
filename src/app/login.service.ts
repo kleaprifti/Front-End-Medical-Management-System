@@ -4,7 +4,8 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '@environments/dev-environment/environment.development';
 import { SessionTimeoutService } from './session-timeout.service';
 import { Router } from '@angular/router';
-
+import { JwtResponse } from './jwt-response';
+import { LoginInfoDto } from './login-info.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,15 @@ export class LoginService {
   private baseUrl = environment.apiUrl;
   private loggedIn = false;
   private tokenKey= "secret";
+  private token!: string;
   private rememberMe= false;
 
   constructor(private http: HttpClient, private router: Router,private sessionService:SessionTimeoutService) { }
+  
+  createAuthenticationToken(username: string, password: string): Observable<JwtResponse> {
+    const body = { username, password };
+    return this.http.post<JwtResponse>(`${this.baseUrl}/login`, body);
+  }
 
   authenticateUser(username: string, password: string): Observable<any> {
     const body = { username, password };
@@ -30,23 +37,18 @@ export class LoginService {
       .pipe(
 
         tap((response: any) => {
+        this.token = response.token;
         this.sessionService.setSessionCheckActive(true);
         this.sessionService.setUsername(username);
         this.sessionService.startSessionCheck();
-          if (response && response.token) {
-            if (this.rememberMe) {
-              localStorage.setItem('Name', response.firstName);
-              localStorage.setItem('token', response.token);
-              localStorage.setItem(this.tokenKey, response.token);
-            }
-          }
+        localStorage.setItem('token', this.token);
+         
         })
       );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
-  }
+
+
 
   clearToken(): void {
     localStorage.removeItem(this.tokenKey);

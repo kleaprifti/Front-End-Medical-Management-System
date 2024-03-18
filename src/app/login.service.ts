@@ -68,6 +68,7 @@ export class LoginService {
   logout(): void {
     this.loggedIn = false;
     this.sessionService.clearUsername();
+    this.clearToken(); 
     this.router.navigate(['/']);
   }
 

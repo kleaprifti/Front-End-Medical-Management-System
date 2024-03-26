@@ -197,9 +197,9 @@ updateAddButtonState() {
 }
 
 
-logout() {
+logout(): void {
   this.loginService.logout();
-  this.router.navigate(['/logout']); 
+  this.router.navigate(['/']); 
 }
 
   sortAppointmentsByTime() {

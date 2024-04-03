@@ -10,6 +10,7 @@ import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appoi
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 import { SessionTimeoutService } from '../session-timeout.service';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-appointment-list',
@@ -56,7 +57,7 @@ export class AppointmentListComponent implements OnInit {
 
 
 
-  constructor(private userService: UserService,  private formBuilder: FormBuilder,
+  constructor(private userService: UserService,  private LoginService: LoginService, private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
@@ -197,9 +198,21 @@ updateAddButtonState() {
 }
 
 
+
 logout(): void {
-  this.loginService.logout();
-  this.router.navigate(['/']); 
+  if (this.loginService) {
+    this.loginService.logout().subscribe(
+      () => {
+        this.router.navigate(['/']);
+      },
+      (error: any) => {
+        console.error('Logout failed:', error);
+      }
+    );
+  } else {
+    console.error('Login service is undefined');
+  }
+
 }
 
   sortAppointmentsByTime() {

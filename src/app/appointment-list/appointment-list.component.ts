@@ -11,6 +11,7 @@ import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 import { SessionTimeoutService } from '../session-timeout.service';
 import { LoginService } from '../login.service';
+import { LogoutService } from '../logout.service';
 
 @Component({
   selector: 'app-appointment-list',
@@ -57,7 +58,7 @@ export class AppointmentListComponent implements OnInit {
 
 
 
-  constructor(private userService: UserService,  private LoginService: LoginService, private formBuilder: FormBuilder,
+  constructor(private userService: UserService, private LogoutService:LogoutService, private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,private modalService: BsModalService) {}
 
   ngOnInit() {
@@ -200,8 +201,8 @@ updateAddButtonState() {
 
 
 logout(): void {
-  if (this.loginService) {
-    this.loginService.logout().subscribe(
+  if (this.LogoutService) {
+    this.LogoutService.logout().subscribe(
       () => {
         this.router.navigate(['/']);
       },
@@ -209,7 +210,8 @@ logout(): void {
         console.error('Logout failed:', error);
       }
     );
-  } else {
+  } 
+  else {
     console.error('Login service is undefined');
   }
 

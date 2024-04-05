@@ -54,13 +54,15 @@ export class AppointmentListComponent implements OnInit {
   latestAddedAppointmentDateTime: Date | null = null;
   router: any;
   loginService: any;
+  SessionTimeoutService: any;
 
 
 
 
   constructor(private userService: UserService, private LogoutService:LogoutService, private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,private modalService: BsModalService) {}
-
+   
+  
   ngOnInit() {
     this.userService.getDoctors().subscribe(users => {
       this.doctors = users;
@@ -73,7 +75,10 @@ export class AppointmentListComponent implements OnInit {
     this.formBuilder.group({
       dateTime: ['', Validators.required], 
     });
-
+    this.LogoutService.getLogoutObservable().subscribe(() => {
+      console.log('Logout successful');
+    });
+    this.LogoutService.logout();
     this.loadAppointments();
     this.appointmentService.getAllAppointments(this.doctorId,this.patientId,this.startDateTime,this.endDateTime).subscribe(
       (data) => {
@@ -199,22 +204,8 @@ updateAddButtonState() {
 }
 
 
-
 logout(): void {
-  if (this.LogoutService) {
-    this.LogoutService.logout().subscribe(
-      () => {
-        this.router.navigate(['/']);
-      },
-      (error: any) => {
-        console.error('Logout failed:', error);
-      }
-    );
-  } 
-  else {
-    console.error('Login service is undefined');
-  }
-
+  this.LogoutService.logout();
 }
 
   sortAppointmentsByTime() {

@@ -18,10 +18,12 @@ export class LogoutService {
     localStorage.removeItem('token');
     sessionStorage.clear();
     this.logoutSubject.next(); 
-    return this.http.get(`${this.baseUrl}/logout`).subscribe(() => {
-      this.router.navigate(['/login']); 
+    return this.http.post(`${this.baseUrl}/logout`,{})
+    .subscribe(() => {
+      this.router.navigate(['/']); 
     });
   }
+
   getLogoutObservable() {
     return this.logoutSubject.asObservable();
   }

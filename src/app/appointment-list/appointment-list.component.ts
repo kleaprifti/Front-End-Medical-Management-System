@@ -12,6 +12,7 @@ import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 import { SessionTimeoutService } from '../session-timeout.service';
 import { LoginService } from '../login.service';
 import { LogoutService } from '../logout.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment-list',
@@ -52,7 +53,6 @@ export class AppointmentListComponent implements OnInit {
   errorMessage: any;
   startTimeToCheck!: string;
   latestAddedAppointmentDateTime: Date | null = null;
-  router: any;
   loginService: any;
   SessionTimeoutService: any;
 
@@ -60,7 +60,7 @@ export class AppointmentListComponent implements OnInit {
 
 
   constructor(private userService: UserService, private LogoutService:LogoutService, private formBuilder: FormBuilder,
-    private appointmentService: AppointmentService,private modalService: BsModalService) {}
+    private appointmentService: AppointmentService,private modalService: BsModalService,private router: Router) {}
    
   
   ngOnInit() {
@@ -206,6 +206,8 @@ updateAddButtonState() {
 
 logout(): void {
   this.LogoutService.logout();
+  this.router.navigate(['/']);
+
 }
 
   sortAppointmentsByTime() {

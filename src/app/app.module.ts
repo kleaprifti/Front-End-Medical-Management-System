@@ -22,6 +22,7 @@ import { AuthGuard } from './auth.guard';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { UserActivityDirective } from './user-activity.directive';
 import { SessionTimeoutService } from './session-timeout.service';
+import { LogoutService } from './logout.service';
 
 
 
@@ -54,7 +55,7 @@ import { SessionTimeoutService } from './session-timeout.service';
 
     BrowserAnimationsModule
   ],
-  providers: [[AuthGuard],SessionTimeoutService],
+  providers: [[AuthGuard],SessionTimeoutService,LogoutService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

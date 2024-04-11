@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { environment } from '@environments/dev-environment/environment.development';
 import { Subject } from 'rxjs';
 
@@ -8,21 +9,17 @@ import { Subject } from 'rxjs';
 })
 export class LogoutService {
   private logoutSubject = new Subject<void>();
-  router: any;
   private baseUrl = environment.apiUrl;
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private router: Router) { }
 
   logout() {
     localStorage.removeItem('token');
     sessionStorage.clear();
     this.logoutSubject.next(); 
-    return this.http.post(`${this.baseUrl}/logout`,{})
-    .subscribe(() => {
-      this.router.navigate(['/']); 
-    });
-  }
+    return this.http.get(`${this.baseUrl}/logout`);
+}
 
   getLogoutObservable() {
     return this.logoutSubject.asObservable();

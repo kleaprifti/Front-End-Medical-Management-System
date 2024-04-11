@@ -206,6 +206,11 @@ updateAddButtonState() {
 
 logout(): void {
   this.LogoutService.logout();
+  // localStorage.removeItem('token');
+  // // sessionStorage.removeItem('token');
+  // // localStorage.removeItem('username');
+  // // sessionStorage.removeItem('username');
+
   this.router.navigate(['/']);
 
 }

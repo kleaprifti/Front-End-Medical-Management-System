@@ -65,13 +65,6 @@ export class LoginService {
     this.loggedIn = status;
   }
 
-  logout(): void {
-    this.loggedIn = false;
-    this.sessionService.clearUsername();
-    this.router.navigate(['/']);
-  }
-
-
   startSessionCheck(): void {
     if (this.loggedIn) {
       this.sessionService.startSessionCheck();

@@ -10,6 +10,9 @@ import { AddAppointmentModalComponent } from '../add-appointment-modal/add-appoi
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import {  ViewChild,AfterViewInit,  ElementRef } from '@angular/core';
 import { SessionTimeoutService } from '../session-timeout.service';
+import { LoginService } from '../login.service';
+import { LogoutService } from '../logout.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment-list',
@@ -50,15 +53,16 @@ export class AppointmentListComponent implements OnInit {
   errorMessage: any;
   startTimeToCheck!: string;
   latestAddedAppointmentDateTime: Date | null = null;
-  router: any;
   loginService: any;
+  SessionTimeoutService: any;
 
 
 
 
-  constructor(private userService: UserService,  private formBuilder: FormBuilder,
-    private appointmentService: AppointmentService,private modalService: BsModalService) {}
-
+  constructor(private userService: UserService, private LogoutService:LogoutService, private formBuilder: FormBuilder,
+    private appointmentService: AppointmentService,private modalService: BsModalService,private router: Router) {}
+   
+  
   ngOnInit() {
     this.userService.getDoctors().subscribe(users => {
       this.doctors = users;
@@ -71,7 +75,10 @@ export class AppointmentListComponent implements OnInit {
     this.formBuilder.group({
       dateTime: ['', Validators.required], 
     });
-
+    this.LogoutService.getLogoutObservable().subscribe(() => {
+      console.log('Logout successful');
+    });
+    this.LogoutService.logout();
     this.loadAppointments();
     this.appointmentService.getAllAppointments(this.doctorId,this.patientId,this.startDateTime,this.endDateTime).subscribe(
       (data) => {
@@ -197,9 +204,15 @@ updateAddButtonState() {
 }
 
 
-logout() {
-  this.loginService.logout();
-  this.router.navigate(['/logout']); 
+logout(): void {
+  this.LogoutService.logout();
+  // localStorage.removeItem('token');
+  // // sessionStorage.removeItem('token');
+  // // localStorage.removeItem('username');
+  // // sessionStorage.removeItem('username');
+
+  this.router.navigate(['/']);
+
 }
 
   sortAppointmentsByTime() {

@@ -33,7 +33,7 @@ export class SessionTimeoutService {
 
     onUserActivity(): void {
       this.lastActivity = Date.now();
-      this.resetTimeout(); 
+      // this.resetTimeout(); 
     }
 
     resetTimeout(): void {

@@ -214,13 +214,13 @@ logout(): void {
     }
 
 });  
-confirmationModalRef.content.confirmed.subscribe((confirmed: boolean) => {
-  if (confirmed) {
-    this.LogoutService.logout();
-  this.router.navigate(['/']);
-  }
+confirmationModalRef.content.confirmed.subscribe(() => {
+  this.LogoutService.logout();
+    this.router.navigate(['/']);
+  
 });
 }
+
 
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {

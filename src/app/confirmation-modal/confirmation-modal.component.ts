@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter,Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { LogoutService } from '@app/logout.service';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-modal',
@@ -13,7 +15,7 @@ export class ModalComponent {
 
   currentAppointment: { appointmentDateStartTime: string } | undefined;
 
-  constructor(public bsModalRef: BsModalRef) {}
+  constructor(public bsModalRef: BsModalRef, private LogoutService: LogoutService,private router: Router) {}
 
 
   confirm() {
@@ -29,6 +31,12 @@ export class ModalComponent {
   get showYesButton(): boolean {
     return this.actionType === 'confirmation';
   }
+  // confirmLogout() {
+  //   this.LogoutService.logout().subscribe(() => {
+  //     this.router.navigate(['/']);
+  //     this.bsModalRef.hide();
+  //   });
+  // }
   
 }
 

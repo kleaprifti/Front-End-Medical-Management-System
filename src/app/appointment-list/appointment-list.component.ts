@@ -205,15 +205,22 @@ updateAddButtonState() {
 
 
 logout(): void {
+
+  const confirmationModalRef: BsModalRef = this.modalService.show(ModalComponent, {
+    initialState: {
+      actionType: 'confirmation',
+      modalTitle: 'Logout Confirmation',
+      modalMessage: 'Are you sure you want to logout?'
+    }
+
+});  
+confirmationModalRef.content.confirmed.subscribe(() => {
   this.LogoutService.logout();
-  // localStorage.removeItem('token');
-  // // sessionStorage.removeItem('token');
-  // // localStorage.removeItem('username');
-  // // sessionStorage.removeItem('username');
-
-  this.router.navigate(['/']);
-
+    this.router.navigate(['/']);
+  
+});
 }
+
 
   sortAppointmentsByTime() {
     this.appointments.sort((a, b) => {
